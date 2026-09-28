@@ -29,7 +29,7 @@ export default function Header() {
         </motion.div>
 
         <motion.div {...reveal} transition={{ ...reveal.transition, delay: 0.22 }} className="hero-profile">
-          <Image src={assets.profile_img} alt="Akash Halder" fill priority sizes="88px" className="object-cover" />
+          <Image src={assets.profile_img} alt="Akash Halder" fill priority sizes="(max-width: 420px) 86px, (max-width: 760px) 96px, (max-width: 1100px) 210px, 252px" className="object-cover" />
         </motion.div>
 
         <motion.p {...reveal} transition={{ ...reveal.transition, delay: 0.32 }} className="hero-greeting">
