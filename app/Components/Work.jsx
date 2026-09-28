@@ -1,56 +1,68 @@
-'use client'
-import React from 'react'
-import { motion } from "motion/react";
-import { assets, workData } from '@/assets/assets'
-import Image from 'next/image';
+'use client';
+
 import Link from 'next/link';
+import Image from 'next/image';
+import { motion } from 'motion/react';
+import { workData } from '@/assets/assets';
 
+export default function Work() {
+  const projectTechStack = [
+    ['React', 'Tailwind CSS', 'Responsive UI', 'State Flow'],
+    ['Geolocation API', 'Leaflet / Maps', 'Mobile First', 'Push Alerts'],
+    ['Gemini AI', 'React.js', 'Node.js', 'Tesseract OCR'],
+    ['React', 'Vite', 'Supabase', 'Framer Motion'],
+  ];
 
-const Work = () => {
   return (
-    <div id='work' className='w-full px-[12%] py-10 scroll-mt-20'>
-        <h4 className='text-center mb-2 text-lg font-Ovo'>My Portfolio</h4>
-        <h2 className='text-center mb-4 text-4xl sm:text-5xl font-sans font-extrabold tracking-tight text-blue-900 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-sky-400 dark:to-indigo-500 drop-shadow-[0_0_10px_rgba(37,99,235,0.3)] dark:drop-shadow-[0_0_15px_rgba(56,189,248,0.4)]'>
-            {"My Latest Work".split("").map((char, index) => (
-              <motion.span
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: index * 0.05 + 0.1, ease: "easeOut" }}
-                className="inline-block"
-              >
-                {char === " " ? "\u00A0" : char}
-              </motion.span>
-            ))}
-        </h2>
+    <section id="work" className="work-section w-full px-[8%] sm:px-[12%] py-20 scroll-mt-24">
+      <div className="max-w-6xl mx-auto">
+        <div className="work-heading text-center mb-14">
+          <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/25 mb-3 font-semibold">
+            <span className="w-2 h-2 rounded-full bg-cyan-500" />
+            PRODUCTION RELEASES &amp; CASE STUDIES
+          </motion.div>
+          <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight text-slate-900 dark:text-white">
+            Featured Deployments
+          </motion.h2>
+          <p className="mt-3 text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-sans">
+            Welcome to my Web Development Portfolio! Explore a collection of projects showcasing my expertise in full-stack development and interactive web engineering.
+          </p>
+        </div>
 
-        <p className='text-center max-w-2xl mx-auto mt-5 mb-12 font-Ovo'>Welcome to my Web Development Portfolio! Explore a collection of projects showcasing my expertise in full-stack development.</p>
+        <div className="work-list">
+          {workData.map((project, index) => {
+            const projectPath = `/work/${index}`;
+            const techStack = project.techStack?.slice(0, 4) || projectTechStack[index] || [];
+            const liveUrl = project.liveUrl && !project.liveUrl.endsWith('Devloper-Akash') ? project.liveUrl : null;
 
-        <div className='grid grid-cols-auto gap-8 my-10 sm:grid-cols-2 lg:grid-cols-4'>
-            {workData.map((project, index) => (
-                <Link href={`/work/${index}`} key={index} style={{backgroundImage: `url(${project.bgImage})`}} className='w-full h-full object-cover group overflow-hidden bg-no-repeat aspect-square bg-cover bg-center rounded-2xl cursor-pointer relative block shadow-lg hover:shadow-[0_15px_40px_rgba(37,99,235,0.3)] dark:shadow-none dark:hover:shadow-[0_0_25px_rgba(56,189,248,0.4)] hover:-translate-y-2 transition-all duration-500'>
-                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500"></div>
-                   <div className='bg-white/90 dark:bg-[#1d1527]/90 backdrop-blur-md w-11/12 rounded-xl absolute bottom-4 left-1/2 -translate-x-1/2 p-5 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-between border border-white/20 dark:border-white/10 group-hover:bottom-6'>
-                        <div>
-                            <h2 className='font-bold text-gray-900 dark:text-white drop-shadow-sm'>{project.title}</h2>
-                            <p className='text-sm text-gray-700 dark:text-white/80'>{project.description}</p>
-                        </div>
-                        <div className='border rounded-full border-gray-900 dark:border-white w-10 aspect-square flex items-center justify-center shadow-[0_0_10px_rgba(0,0,0,0.1)] dark:shadow-[0_0_10px_rgba(255,255,255,0.2)] group-hover:bg-blue-600 dark:group-hover:bg-sky-400 group-hover:border-transparent transition-all duration-300'>
-                            <Image src={assets.send_icon} alt='send icon' className='w-5 filter invert-0 dark:invert group-hover:invert-100 dark:group-hover:invert-0 transition-all'/> 
-                        </div>
-                   </div>
+            return (
+              <motion.article key={project.title || index} initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: Math.min(index * 0.06, 0.24) }} viewport={{ once: true }} className="work-item">
+                <Link href={projectPath} className="work-visual" data-cursor="VIEW" aria-label={`View ${project.title}`}>
+                  <Image src={project.bgImage} alt={project.title} fill sizes="(max-width: 760px) 100vw, 56vw" className="work-image object-cover" />
+                  <span className="work-image-index">0{index + 1} / {String(workData.length).padStart(2, '0')}</span>
                 </Link>
-            ))}
-        </div>
-        <div>
-            <motion.a whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} href='' className='w-max flex items-center justify-center gap-3 text-gray-800 dark:text-white font-bold bg-white dark:bg-white/5 border border-gray-300 dark:border-white/20 rounded-full py-4 px-12 mx-auto my-16 shadow-[0_5px_15px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_25px_rgba(37,99,235,0.25)] dark:shadow-none dark:hover:shadow-[0_0_20px_rgba(56,189,248,0.4)] hover:text-blue-600 dark:hover:text-sky-400 transition-all duration-500'>
-                Show More
-                <Image src={assets.right_arrow_bold_dark} alt='' className='hidden w-4 dark:block'/>
-                <Image src={assets.right_arrow_bold} alt='' className='w-4 dark:hidden'/>
-            </motion.a>
-        </div>
-    </div>
-  )
-}
 
-export default Work
+                <div className="work-copy">
+                  <div className="work-meta"><span>PROJECT {String(index + 1).padStart(2, '0')}</span><span>{project.description}</span></div>
+                  <h3>{project.title}</h3>
+                  <p>{project.longDescription}</p>
+                  <div className="work-stack" aria-label="Technologies">
+                    {techStack.map((tech) => <span key={tech}>{tech}</span>)}
+                  </div>
+                  <div className="work-links">
+                    <Link href={projectPath} className="text-link">INSPECT SPECS</Link>
+                    {liveUrl && <a href={liveUrl} target="_blank" rel="noopener noreferrer" className="text-link text-link-muted">LIVE DEMO</a>}
+                  </div>
+                </div>
+              </motion.article>
+            );
+          })}
+        </div>
+
+        <div className="work-github">
+          <a href="https://github.com/Devloper-Akash" target="_blank" rel="noopener noreferrer" className="text-link">EXPLORE ALL REPOSITORIES ON GITHUB</a>
+        </div>
+      </div>
+    </section>
+  );
+}

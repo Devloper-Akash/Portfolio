@@ -1,56 +1,120 @@
-'use client'
+'use client';
 
-import { assets, serviceData } from '@/assets/assets'
-import React from 'react'
+import React from 'react';
 import Image from 'next/image';
-import { motion } from "motion/react";
+import { motion } from 'motion/react';
+import { serviceData } from '@/assets/assets';
+import TiltCard3D from './TiltCard3D';
 
-const Services = () => {
+export default function Services() {
+  const serviceBadges = [
+    ['Next.js', 'React', 'REST APIs'],
+    ['Responsive', 'PWA', 'Location Tracking'],
+    ['Wireframes', 'Accessibility', 'Figma'],
+    ['Visual Systems', 'Branding', 'Vector Assets'],
+  ];
+
   return (
-    <motion.div initial={{opacity:0}} whileInView={{opacity:1}} transition={{duration:1}} id="services" className='w-full px-[12%] py-10 scroll-mt-20'>
-        <motion.h4 initial={{y:-20,opacity:0}} whileInView={{y:0,opacity:1}} transition={{duration:0.3,delay:0.5}} className='text-center mb-2 text-lg font-Ovo'>What I Offer</motion.h4>
-        <h2 className='text-center text-4xl sm:text-5xl font-sans font-extrabold tracking-tight text-blue-900 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-sky-400 dark:to-indigo-500 drop-shadow-[0_0_10px_rgba(37,99,235,0.3)] dark:drop-shadow-[0_0_15px_rgba(56,189,248,0.4)]'>
-            {"My Services".split("").map((char, index) => (
-              <motion.span
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: index * 0.05 + 0.1, ease: "easeOut" }}
-                className="inline-block"
-              >
-                {char === " " ? "\u00A0" : char}
-              </motion.span>
-            ))}
-        </h2>
-
-        <p className='text-center max-w-2xl mx-auto mt-5 mb-12 font-Ovo'>I am a dedicated fresher in software development, offering responsive and user-friendly web solutions. I focus on writing clean code, solving problems efficiently, and continuously learning new technologies to deliver high-quality results.</p>
-
-        <div className='grid grid-cols-1 gap-8 my-10 sm:grid-cols-2 lg:grid-cols-4'>
-            {serviceData.map(({icon,title,description,link},index) => {
-                return (
-                <motion.div 
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 + index * 0.1, ease: 'easeOut' }}
-                  key={index} 
-                  className='relative overflow-hidden bg-white/60 dark:bg-[#231533]/60 backdrop-blur-xl p-8 rounded-3xl border border-gray-200 dark:border-white/10 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_40px_-10px_rgba(56,189,248,0.1)] cursor-pointer group hover:-translate-y-3 transition-all duration-500'
-                >
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-indigo-500/5 dark:from-sky-400/10 dark:to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                    
-                    <div className="relative z-10 flex flex-col h-full">
-                        <Image src={icon} alt='' className='w-12 mb-6 transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 drop-shadow-md'/>
-                        <h3 className='text-xl font-bold my-4 text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-sky-400 transition-colors duration-300'>{title}</h3>
-                        <p className='text-gray-600 text-sm leading-relaxed dark:text-white/75 flex-grow'>{description}</p>
-                        <a href={link || '#contact'} className='flex items-center gap-2 text-sm mt-8 font-semibold text-blue-600 dark:text-sky-400 opacity-80 group-hover:opacity-100 group-hover:gap-4 transition-all duration-300'>
-                            Learn More <Image src={assets.right_arrow} alt='' className='w-4 dark:brightness-200'/>
-                        </a>
-                    </div>
-                </motion.div>
-                );
-            })}
+    <section id="services" className="w-full px-[8%] sm:px-[12%] py-20 scroll-mt-24">
+      <div className="max-w-6xl mx-auto">
+        {/* Section Header */}
+        <div className="text-center mb-14">
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border border-indigo-500/25 mb-3 font-semibold"
+          >
+            <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
+            SERVICES & DELIVERABLES
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight text-slate-900 dark:text-white"
+          >
+            Engineering Capabilities
+          </motion.h2>
+          <p className="mt-3 text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-sans">
+            I am a dedicated fresher in software development, offering responsive and user-friendly web solutions. I focus on writing clean code, solving problems efficiently, and continuously learning new technologies to deliver high-quality results.
+          </p>
         </div>
-    </motion.div>
-  )
-}
 
-export default Services
+        {/* 3D Interactive Capability Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {serviceData.map(({ icon, title, description, link }, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              viewport={{ once: true }}
+              className="h-full"
+            >
+              <TiltCard3D
+                tiltAngle={9}
+                glare={false}
+                className="h-full rounded-3xl p-6 bg-white dark:bg-[#0d1117]/85 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 shadow-lg shadow-slate-200/40 dark:shadow-xl dark:shadow-black/50 hover:shadow-2xl transition-colors group flex flex-col justify-between"
+                style={{
+                  boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+                }}
+              >
+                <div className="[transform-style:preserve-3d]">
+                  {/* 3D Elevated Icon Container */}
+                  <div
+                    style={{ transform: 'translateZ(34px)' }}
+                    className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center mb-6 transition-all duration-300 shadow-sm"
+                  >
+                    <Image src={icon} alt={title} className="w-7 h-7 drop-shadow-sm group-hover:scale-110 transition-transform duration-300" />
+                  </div>
+
+                  {/* 3D Elevated Service Title */}
+                  <h3
+                    style={{ transform: 'translateZ(26px)' }}
+                    className="text-xl font-heading font-bold text-slate-900 dark:text-white mb-2"
+                  >
+                    {title}
+                  </h3>
+
+                  {/* Service Description */}
+                  <p
+                    style={{ transform: 'translateZ(18px)' }}
+                    className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-sans mb-4"
+                  >
+                    {description}
+                  </p>
+
+                  {/* Micro tech tags */}
+                  <div
+                    style={{ transform: 'translateZ(22px)' }}
+                    className="flex flex-wrap gap-1.5 mb-6"
+                  >
+                    {serviceBadges[index]?.map((badge, bIdx) => (
+                      <span
+                        key={bIdx}
+                        className="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/5 transition-colors"
+                      >
+                        {badge}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3D Elevated Action Link */}
+                <a
+                  href={link || '#contact'}
+                  style={{ transform: 'translateZ(24px)' }}
+                  className="inline-flex items-center gap-2 text-xs font-mono font-bold text-emerald-700 dark:text-emerald-400 group-hover:text-emerald-800 dark:group-hover:text-emerald-300 transition-colors pt-4 border-t border-slate-100 dark:border-white/5"
+                >
+                  <span>Initialize Project</span>
+                  <span className="group-hover:translate-x-1.5 transition-transform">&rarr;</span>
+                </a>
+              </TiltCard3D>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -1,5 +1,6 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
+
+import React, { useEffect, useRef, useSyncExternalStore } from 'react';
 import dynamic from 'next/dynamic';
 import { motion } from 'motion/react';
 
@@ -8,204 +9,191 @@ const Globe = dynamic(() => import('react-globe.gl'), { ssr: false });
 const KOLKATA_LAT = 22.5726;
 const KOLKATA_LNG = 88.3639;
 
-// Multiple markers - Kolkata + major tech hubs
+// Global tech hub nodes
 const markerData = [
-  { lat: KOLKATA_LAT, lng: KOLKATA_LNG, label: '🏠 Kolkata — Home Base', size: 1.2, color: '#f59e0b' },
-  { lat: 37.7749, lng: -122.4194, label: 'San Francisco', size: 0.4, color: '#38bdf8' },
-  { lat: 51.5074, lng: -0.1278, label: 'London', size: 0.4, color: '#38bdf8' },
-  { lat: 35.6762, lng: 139.6503, label: 'Tokyo', size: 0.4, color: '#38bdf8' },
-  { lat: -33.8688, lng: 151.2093, label: 'Sydney', size: 0.4, color: '#38bdf8' },
-  { lat: 1.3521, lng: 103.8198, label: 'Singapore', size: 0.4, color: '#38bdf8' },
-  { lat: 55.7558, lng: 37.6173, label: 'Moscow', size: 0.4, color: '#38bdf8' },
-  { lat: 48.8566, lng: 2.3522, label: 'Paris', size: 0.4, color: '#38bdf8' },
-  { lat: 25.2048, lng: 55.2708, label: 'Dubai', size: 0.4, color: '#38bdf8' },
-  { lat: 19.076, lng: 72.8777, label: 'Mumbai', size: 0.35, color: '#a78bfa' },
-  { lat: 28.6139, lng: 77.209, label: 'Delhi', size: 0.35, color: '#a78bfa' },
-  { lat: 12.9716, lng: 77.5946, label: 'Bangalore', size: 0.35, color: '#a78bfa' },
+  { lat: KOLKATA_LAT, lng: KOLKATA_LNG, label: '🏠 Kolkata — Home Base', size: 1.4, color: '#10b981' },
+  { lat: 37.7749, lng: -122.4194, label: 'San Francisco (US-West)', size: 0.5, color: '#06b6d4' },
+  { lat: 51.5074, lng: -0.1278, label: 'London (EU-West)', size: 0.5, color: '#06b6d4' },
+  { lat: 35.6762, lng: 139.6503, label: 'Tokyo (AP-Northeast)', size: 0.5, color: '#06b6d4' },
+  { lat: -33.8688, lng: 151.2093, label: 'Sydney (AP-Southeast)', size: 0.5, color: '#06b6d4' },
+  { lat: 1.3521, lng: 103.8198, label: 'Singapore (AP-South)', size: 0.5, color: '#06b6d4' },
+  { lat: 55.7558, lng: 37.6173, label: 'Moscow', size: 0.4, color: '#6366f1' },
+  { lat: 48.8566, lng: 2.3522, label: 'Paris (EU-Central)', size: 0.5, color: '#06b6d4' },
+  { lat: 25.2048, lng: 55.2708, label: 'Dubai (ME-Central)', size: 0.5, color: '#06b6d4' },
+  { lat: 19.076, lng: 72.8777, label: 'Mumbai (IN-West)', size: 0.4, color: '#10b981' },
+  { lat: 28.6139, lng: 77.209, label: 'Delhi (IN-North)', size: 0.4, color: '#10b981' },
+  { lat: 12.9716, lng: 77.5946, label: 'Bangalore (IN-South)', size: 0.4, color: '#10b981' },
 ];
 
-// Animated arcs radiating from Kolkata to global cities
+// Telemetry network arcs from Kolkata
 const arcData = [
-  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: 37.7749, endLng: -122.4194, color: ['#f59e0b', '#38bdf8'] },
-  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: 51.5074, endLng: -0.1278, color: ['#f59e0b', '#6366f1'] },
-  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: 35.6762, endLng: 139.6503, color: ['#f59e0b', '#38bdf8'] },
-  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: -33.8688, endLng: 151.2093, color: ['#f59e0b', '#a78bfa'] },
-  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: 1.3521, endLng: 103.8198, color: ['#f59e0b', '#38bdf8'] },
-  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: 55.7558, endLng: 37.6173, color: ['#f59e0b', '#6366f1'] },
-  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: 48.8566, endLng: 2.3522, color: ['#f59e0b', '#a78bfa'] },
-  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: 25.2048, endLng: 55.2708, color: ['#f59e0b', '#38bdf8'] },
-  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: 40.7128, endLng: -74.006, color: ['#f59e0b', '#6366f1'] },
-  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: 19.076, endLng: 72.8777, color: ['#f59e0b', '#a78bfa'] },
-  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: 28.6139, endLng: 77.209, color: ['#f59e0b', '#a78bfa'] },
-  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: 12.9716, endLng: 77.5946, color: ['#f59e0b', '#a78bfa'] },
+  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: 37.7749, endLng: -122.4194, color: ['#10b981', '#06b6d4'] },
+  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: 51.5074, endLng: -0.1278, color: ['#10b981', '#6366f1'] },
+  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: 35.6762, endLng: 139.6503, color: ['#10b981', '#06b6d4'] },
+  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: -33.8688, endLng: 151.2093, color: ['#10b981', '#8b5cf6'] },
+  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: 1.3521, endLng: 103.8198, color: ['#10b981', '#06b6d4'] },
+  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: 48.8566, endLng: 2.3522, color: ['#10b981', '#6366f1'] },
+  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: 25.2048, endLng: 55.2708, color: ['#10b981', '#06b6d4'] },
+  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: 19.076, endLng: 72.8777, color: ['#10b981', '#10b981'] },
+  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: 28.6139, endLng: 77.209, color: ['#10b981', '#10b981'] },
+  { startLat: KOLKATA_LAT, startLng: KOLKATA_LNG, endLat: 12.9716, endLng: 77.5946, color: ['#10b981', '#10b981'] },
 ];
 
-// Multiple pulsing rings from Kolkata
-const ringData = [
-  { lat: KOLKATA_LAT, lng: KOLKATA_LNG, maxR: 6, propagationSpeed: 2, repeatPeriod: 800 },
-  { lat: KOLKATA_LAT, lng: KOLKATA_LNG, maxR: 10, propagationSpeed: 4, repeatPeriod: 1500 },
-];
+const emptySubscribe = () => () => {};
 
-export default function GlobeSection({ isDarkMode }) {
-  const globeRef = useRef();
-  const [mounted, setMounted] = useState(false);
+export default function GlobeSection() {
+  const globeRef = useRef(null);
+  const [isDarkMode, setIsDarkMode] = React.useState(true);
+
+  // Hydration-safe mount detection without cascading render state
+  const isClient = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 
   useEffect(() => {
-    setMounted(true);
+    const updateTheme = () => setIsDarkMode(document.documentElement.dataset.theme !== 'light');
+    updateTheme();
+    window.addEventListener('portfolio-theme-change', updateTheme);
+    return () => window.removeEventListener('portfolio-theme-change', updateTheme);
   }, []);
 
   useEffect(() => {
-    if (!mounted) return;
+    if (!isClient) return;
 
-    // Poll until the globe ref is ready (it renders async via dynamic import)
     const interval = setInterval(() => {
       if (globeRef.current) {
         clearInterval(interval);
-
         const controls = globeRef.current.controls();
         if (controls) {
           controls.autoRotate = true;
-          controls.autoRotateSpeed = 1.0;
-          controls.enableZoom = true;
-          controls.minDistance = 200;
-          controls.maxDistance = 500;
+          controls.autoRotateSpeed = 0.8;
+          controls.enableZoom = false;
         }
 
         globeRef.current.pointOfView(
-          { lat: KOLKATA_LAT, lng: KOLKATA_LNG, altitude: 2.5 },
-          2000
+          { lat: KOLKATA_LAT, lng: KOLKATA_LNG, altitude: 2.3 },
+          1500
         );
       }
     }, 200);
 
     return () => clearInterval(interval);
-  }, [mounted]);
+  }, [isClient]);
 
-  if (!mounted) return null;
+  if (!isClient) {
+    return (
+      <div className="w-full py-20 min-h-[500px] flex items-center justify-center">
+        <div className="font-mono text-xs text-slate-500 animate-pulse">Initializing 3D Globe Telemetry...</div>
+      </div>
+    );
+  }
 
   return (
-    <div id="location" className="w-full px-[12%] py-20 scroll-mt-20 relative">
-
-      {/* Ambient particles behind the globe */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
-        {[
-          { top: "15%", left: "8%", dur: 7 }, { top: "75%", left: "88%", dur: 5 },
-          { top: "25%", left: "82%", dur: 6 }, { top: "55%", left: "12%", dur: 8 },
-          { top: "85%", left: "25%", dur: 9 }, { top: "35%", left: "65%", dur: 7 },
-        ].map((p, i) => (
+    <section id="location" className="w-full px-[8%] sm:px-[12%] py-20 scroll-mt-24 relative overflow-hidden">
+      <div className="max-w-6xl mx-auto">
+        {/* Section Header */}
+        <div className="text-center mb-10">
           <motion.div
-            key={i}
-            className="absolute w-2 h-2 bg-blue-500/20 dark:bg-sky-400/20 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.6)]"
-            style={{ top: p.top, left: p.left }}
-            animate={{ y: [0, -30, 0], opacity: [0.2, 0.8, 0.2], scale: [1, 1.5, 1] }}
-            transition={{ duration: p.dur, repeat: Infinity, ease: "easeInOut" }}
-          />
-        ))}
-      </div>
-
-      <motion.h4
-        initial={{ opacity: 0, y: -20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-        className="text-center mb-2 text-lg font-Ovo"
-      >
-        My Location
-      </motion.h4>
-
-      <h2 className="text-center mb-6 text-4xl sm:text-5xl font-sans font-extrabold tracking-tight text-blue-900 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-sky-400 dark:to-indigo-500 drop-shadow-[0_0_10px_rgba(37,99,235,0.3)] dark:drop-shadow-[0_0_15px_rgba(56,189,248,0.4)]">
-        {"Based In Kolkata".split("").map((char, index) => (
-          <motion.span
-            key={index}
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: index * 0.05 + 0.1, ease: "easeOut" }}
-            className="inline-block"
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25 mb-3 font-semibold"
           >
-            {char === " " ? "\u00A0" : char}
-          </motion.span>
-        ))}
-      </h2>
-
-      <p className="text-center max-w-2xl mx-auto mb-12 font-Ovo text-gray-600 dark:text-gray-400">
-        Drag to explore the interactive 3D globe — arcs radiate from Kolkata to major cities worldwide.
-      </p>
-
-      <motion.div
-        initial={{ opacity: 0, scale: 0.85, y: 40 }}
-        whileInView={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 1.2, type: 'spring', stiffness: 80 }}
-        className="relative w-full max-w-[620px] aspect-square mx-auto flex items-center justify-center rounded-[2.5rem] backdrop-blur-xl bg-gradient-to-br from-white/40 via-white/20 to-white/40 dark:from-white/5 dark:via-transparent dark:to-white/5 border border-gray-200/50 dark:border-white/10 shadow-[0_25px_80px_rgba(0,0,0,0.08)] dark:shadow-[0_0_100px_rgba(56,189,248,0.06)] overflow-hidden hover:shadow-[0_30px_90px_rgba(37,99,235,0.2)] dark:hover:shadow-[0_0_120px_rgba(56,189,248,0.2)] transition-shadow duration-700"
-      >
-        {/* Subtle animated border glow */}
-        <div className="absolute inset-0 rounded-[2.5rem] bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-sky-500/10 dark:from-sky-400/10 dark:via-indigo-500/10 dark:to-blue-600/10 animate-pulse pointer-events-none"></div>
-
-        <Globe
-          ref={globeRef}
-          width={580}
-          height={580}
-          backgroundColor="rgba(0,0,0,0)"
-          
-          // Earth textures
-          globeImageUrl={isDarkMode
-            ? '//unpkg.com/three-globe/example/img/earth-night.jpg'
-            : '//unpkg.com/three-globe/example/img/earth-blue-marble.jpg'
-          }
-          bumpImageUrl='//unpkg.com/three-globe/example/img/earth-topology.png'
-          
-          // Clouds layer for extra realism
-          cloudsImageUrl='//unpkg.com/three-globe/example/img/earth-clouds.png'
-          cloudsAltitude={0.02}
-          cloudsRotate={true}
-          cloudsOpacity={0.4}
-          
-          // Atmosphere
-          atmosphereColor={isDarkMode ? '#38bdf8' : '#6366f1'}
-          atmosphereAltitude={0.22}
-
-          // Glowing points
-          pointsData={markerData}
-          pointLat="lat"
-          pointLng="lng"
-          pointColor="color"
-          pointAltitude={0.02}
-          pointRadius="size"
-          pointLabel="label"
-
-          // Animated arcs
-          arcsData={arcData}
-          arcStartLat="startLat"
-          arcStartLng="startLng"
-          arcEndLat="endLat"
-          arcEndLng="endLng"
-          arcColor="color"
-          arcDashLength={0.4}
-          arcDashGap={0.2}
-          arcDashAnimateTime={1500}
-          arcStroke={0.6}
-          arcAltitudeAutoScale={0.4}
-
-          // Pulsing rings
-          ringsData={ringData}
-          ringColor={() => isDarkMode ? '#38bdf8' : '#6366f1'}
-          ringMaxRadius="maxR"
-          ringPropagationSpeed="propagationSpeed"
-          ringRepeatPeriod="repeatPeriod"
-
-          animateIn={true}
-          rendererConfig={{ antialias: true, alpha: true }}
-        />
-
-        {/* Location badge */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-white/85 dark:bg-black/60 backdrop-blur-xl px-6 py-3 rounded-full border border-gray-200 dark:border-white/20 shadow-lg pointer-events-none z-10">
-          <span className="relative flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 dark:bg-amber-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
-          </span>
-          <p className="text-sm sm:text-base font-bold text-gray-800 dark:text-white tracking-wide">
-            📍 Kolkata, West Bengal
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            GLOBAL DATA NODES & DEPLOYMENTS
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight text-slate-900 dark:text-white"
+          >
+            Global Availability & Hub
+          </motion.h2>
+          <p className="mt-3 text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-sans">
+            Operating from Kolkata, India with low-latency communication channels connecting worldwide cloud infrastructure.
           </p>
         </div>
-      </motion.div>
-    </div>
+
+        {/* 3D Globe & Telemetry Panel Card */}
+        <div className="rounded-3xl p-6 sm:p-8 bg-white dark:bg-[#0d1117]/90 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 shadow-2xl shadow-slate-200/50 dark:shadow-black/40 relative overflow-hidden flex flex-col lg:flex-row items-center gap-8">
+          {/* Globe Canvas Container */}
+          <div className="w-full lg:w-3/5 h-[400px] sm:h-[480px] relative flex items-center justify-center cursor-grab active:cursor-grabbing">
+            <Globe
+              ref={globeRef}
+              width={typeof window !== 'undefined' ? Math.min(window.innerWidth * 0.8, 600) : 500}
+              height={460}
+              globeImageUrl={
+                isDarkMode
+                  ? '//unpkg.com/three-globe/example/img/earth-dark.jpg'
+                  : '//unpkg.com/three-globe/example/img/earth-blue-marble.jpg'
+              }
+              bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
+              backgroundColor="rgba(0,0,0,0)"
+              atmosphereColor="#10b981"
+              atmosphereAltitude={0.18}
+              pointsData={markerData}
+              pointLat="lat"
+              pointLng="lng"
+              pointColor="color"
+              pointRadius="size"
+              pointAltitude={0.02}
+              arcsData={arcData}
+              arcColor="color"
+              arcDashLength={0.4}
+              arcDashGap={0.2}
+              arcDashAnimateTime={2500}
+              arcStroke={1.2}
+            />
+          </div>
+
+          {/* Telemetry Stats Sidebar */}
+          <div className="w-full lg:w-2/5 space-y-4 font-mono">
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5 shadow-sm">
+              <div className="text-[11px] text-slate-500 uppercase tracking-wider font-semibold">Home Base Location</div>
+              <div className="text-base font-bold text-slate-900 dark:text-white mt-1 flex items-center gap-2">
+                <span>Kolkata, West Bengal, India</span>
+                <span className="text-xs px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 font-bold">HQ</span>
+              </div>
+              <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">Coordinates: 22.5726° N, 88.3639° E</div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5 shadow-sm">
+              <div className="text-[11px] text-slate-500 uppercase tracking-wider font-semibold">Network Latency & Reach</div>
+              <div className="grid grid-cols-2 gap-3 mt-2 text-xs">
+                <div>
+                  <span className="text-slate-500 dark:text-slate-400 block">AP-South:</span>
+                  <span className="text-emerald-700 dark:text-emerald-400 font-bold">12ms (Optimal)</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 dark:text-slate-400 block">EU-West:</span>
+                  <span className="text-cyan-700 dark:text-cyan-400 font-bold">118ms</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 dark:text-slate-400 block">US-West:</span>
+                  <span className="text-slate-700 dark:text-slate-300 font-bold">185ms</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 dark:text-slate-400 block">Protocol:</span>
+                  <span className="text-indigo-700 dark:text-indigo-400 font-bold">HTTP/3 QUIC</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-xs shadow-sm">
+              <div className="text-emerald-800 dark:text-emerald-400 font-bold flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                <span>Ready for Remote & Distributed Teams</span>
+              </div>
+              <p className="text-slate-700 dark:text-slate-300 text-xs font-sans mt-1">
+                Collaborating seamlessly across time zones with async communication and agile practices.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }

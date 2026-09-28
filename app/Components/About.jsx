@@ -1,58 +1,226 @@
-'use client'
-import { assets, infoList, toolsData } from '@/assets/assets'
-import React from 'react'
+'use client';
+
+import React from 'react';
 import Image from 'next/image';
-import { motion } from "motion/react"
+import { motion } from 'motion/react';
+import { assets, infoList } from '@/assets/assets';
+import TiltCard3D from './TiltCard3D';
 
-const About = () => {
+export default function About() {
   return (
-    <motion.div initial={{opacity:0}} whileInView={{opacity:1}} transition={{duration:1}} id='about' className='w-full px-[12%] py-10 scroll-mt-20'>
-        <motion.h4 initial={{opacity:0,y:-20}} whileInView={{opacity:1,y:0}} transition={{duration:0.5,delay:0.3}} className='text-center mb-2 text-lg font-Ovo'>Introduction</motion.h4>
-        <h2 className='text-center mb-4 text-4xl sm:text-5xl font-sans font-extrabold tracking-tight text-blue-900 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-sky-400 dark:to-indigo-500 drop-shadow-[0_0_10px_rgba(37,99,235,0.3)] dark:drop-shadow-[0_0_15px_rgba(56,189,248,0.4)]'>
-            {"About Me".split("").map((char, index) => (
-              <motion.span
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: index * 0.05 + 0.1, ease: "easeOut" }}
-                className="inline-block"
+    <section id="about" className="w-full px-[8%] sm:px-[12%] py-20 scroll-mt-24">
+      <div className="max-w-6xl mx-auto">
+        {/* Section Header */}
+        <div className="text-center mb-14">
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/25 mb-3 font-semibold"
+          >
+            <span className="w-2 h-2 rounded-full bg-cyan-500"></span>
+            SYSTEM ARCHITECTURE & IDENTITY
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight text-slate-900 dark:text-white"
+          >
+            About & Core Competencies
+          </motion.h2>
+          <p className="mt-3 text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-sans">
+            Bridging robust backend engineering with responsive, interactive frontend architectures.
+          </p>
+        </div>
+
+        {/* Bento Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Bento Card 1: Visual Identity & Bio (7 cols) */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="lg:col-span-7"
+          >
+            <TiltCard3D
+              tiltAngle={4}
+              glare={false}
+              className="about-bio-card h-full rounded-3xl p-6 sm:p-8 bg-white dark:bg-[#0d1117]/85 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 shadow-xl shadow-slate-200/50 dark:shadow-black/50 transition-colors"
+              style={{
+                boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+              }}
+            >
+              <div className="about-bio-layout">
+                <div
+                  style={{ transform: 'translateZ(26px)' }}
+                  className="about-profile relative aspect-square overflow-hidden border border-slate-200 dark:border-white/10 group"
+                >
+                  <Image
+                    src={assets.user_image}
+                    alt="Akash"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                </div>
+                <div className="about-bio-copy [transform-style:preserve-3d]">
+                <div
+                  style={{ transform: 'translateZ(22px)' }}
+                  className="inline-block text-[11px] font-mono text-emerald-700 dark:text-emerald-400 font-bold px-2.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 mb-3"
+                >
+                  BIOGRAPHY
+                </div>
+                <p
+                  style={{ transform: 'translateZ(18px)' }}
+                  className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed font-sans"
+                >
+                  I am a passionate and dedicated software developer with a strong background in web development. I have experience working with various programming languages and frameworks, and I am always eager to learn new technologies. I am committed to delivering high-quality code and creating innovative solutions to complex problems. My goal is to continuously improve my skills and contribute to the success of the projects I work on.
+                </p>
+                <div
+                  style={{ transform: 'translateZ(20px)' }}
+                  className="mt-4 flex items-center gap-2 text-xs font-mono text-slate-600 dark:text-slate-400"
+                >
+                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  <span>Open for Fullstack & Backend Engineering roles</span>
+                </div>
+                <div
+                  style={{ transform: 'translateZ(24px)' }}
+                  className="mt-5 flex flex-wrap items-center gap-3 text-xs font-mono"
+                >
+                  <a
+                    href="/akash-halder-resume.pdf"
+                    download="Akash-Halder-Resume.pdf"
+                    className="px-3.5 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 font-bold transition-all flex items-center gap-1.5 shadow-sm"
+                  >
+                    <span>Download Resume PDF</span>
+                    <span>&darr;</span>
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/in/akash-halder-779701379/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3.5 py-1.5 rounded-xl bg-[#0a66c2]/10 hover:bg-[#0a66c2]/20 text-[#0a66c2] dark:text-[#38bdf8] border border-[#0a66c2]/30 font-bold transition-all flex items-center gap-1.5 shadow-sm"
+                  >
+                    <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+                    </svg>
+                    <span>LinkedIn Profile</span>
+                  </a>
+                </div>
+                </div>
+              </div>
+            </TiltCard3D>
+          </motion.div>
+
+          {/* Bento Card 2: Core Metrics (5 cols) */}
+          <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+            {infoList.map((item, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                className="p-5 rounded-2xl bg-white dark:bg-[#0d1117]/85 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 shadow-sm hover:shadow-md shadow-slate-200/40 transition-all group flex items-start gap-4"
               >
-                {char === " " ? "\u00A0" : char}
-              </motion.span>
+                <div className="w-11 h-11 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center flex-shrink-0 transition-colors">
+                  <Image src={item.icon} alt={item.title} className="w-5 h-5 dark:hidden" />
+                  <Image src={item.iconDark} alt={item.title} className="w-5 h-5 hidden dark:block" />
+                </div>
+                <div>
+                  <h3 className="font-heading font-bold text-slate-900 dark:text-slate-100 text-sm">
+                    {item.title}
+                  </h3>
+                  <p className="text-slate-600 dark:text-slate-400 text-xs mt-1 font-sans leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
+              </motion.div>
             ))}
-        </h2>
+          </div>
 
-        <motion.div initial={{opacity:0}} whileInView={{opacity:1}} transition={{duration:1}} className='flex w-full flex-col lg:flex-row items-center gap-20 my-20'>
-            <motion.div initial={{opacity:0,scale:0.9}} whileInView={{opacity:1,scale:1}} transition={{duration:0.6}}className='w-64 sm:w-80 rounded-3xl max-w-none'>
-                <Image src={assets.user_image} alt='user' className='w-full rounded-3xl'/>
-            </motion.div>
-            <motion.div  initial={{opacity:0,scale:0.9}} whileInView={{opacity:1,scale:1}} transition={{duration:0.6}} className='flex-1'>
-                <p className='mb-10 max-w-2xl font-Ovo'>I am a passionate and dedicated software developer with a strong background in web development. I have experience working with various programming languages and frameworks, and I am always eager to learn new technologies. I am committed to delivering high-quality code and creating innovative solutions to complex problems. My goal is to continuously improve my skills and contribute to the success of the projects I work on.</p>
+          {/* Bento Card 3: Categorized Tech Stack Grid (12 cols) */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="lg:col-span-12 rounded-3xl p-6 sm:p-8 bg-white dark:bg-[#0d1117]/85 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 shadow-xl shadow-slate-200/50 dark:shadow-black/40"
+          >
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+              <div>
+                <h3 className="text-xl font-heading font-bold text-slate-900 dark:text-white">
+                  Developer Ecosystem & Toolchain
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-mono mt-1">
+                  Primary weapons of choice for production-grade web systems
+                </p>
+              </div>
+              <div className="flex items-center gap-2 text-xs font-mono text-emerald-700 dark:text-emerald-400 font-bold">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Active Stack</span>
+              </div>
+            </div>
 
-                <motion.ul  initial={{x:30,opacity:0}} whileInView={{x:0,opacity:1}} transition={{duration:0.8,delay:1}} className='grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl'>
-                   {infoList.map(({icon,iconDark,title,description},index)=>
-                   <motion.li whileInView={{scale:1.05}} className='border border-gray-200 rounded-xl p-6 cursor-pointer hover:bg-white dark:bg-white/5 dark:border-white/10 dark:hover:bg-white/10 hover:-translate-y-2 duration-500 shadow-[0_4px_15px_rgba(0,0,0,0.05)] hover:shadow-[0_10px_25px_rgba(37,99,235,0.15)] dark:shadow-[0_4px_15px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_0_20px_rgba(56,189,248,0.2)] transition-all group' key={index}>
-                    <Image src={iconDark} alt={title} className='hidden w-7 mt-3 dark:block transform group-hover:scale-110 transition-transform duration-300'/>
-                    <Image src={icon} alt={title} className='w-7 mt-3 dark:hidden transform group-hover:scale-110 transition-transform duration-300'/> 
-                    <h3 className='my-4 font-bold text-gray-700 dark:text-white group-hover:text-blue-600 dark:group-hover:text-sky-400 transition-colors'>{title}</h3>
-                    <p className='text-gray-600 text-sm dark:text-white/80'>{description}</p>
-                   </motion.li>
-                  )}
-                </motion.ul>
+            {/* Tool Icons with 3D Tilt */}
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+              {[
+                { name: 'VS Code', icon: assets.vscode, desc: 'Primary IDE' },
+                { name: 'MongoDB', icon: assets.mongodb, desc: 'NoSQL Document Store' },
+                { name: 'Firebase', icon: assets.firebase, desc: 'Auth & Cloud Storage' },
+                { name: 'Git', icon: assets.git, desc: 'Version Control' },
+                { name: 'Figma', icon: assets.figma, desc: 'UI/UX & Prototyping' },
+              ].map((tool, index) => (
+                <TiltCard3D
+                  key={index}
+                  tiltAngle={10}
+                  glare={false}
+                  className="flex items-center gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/15 shadow-sm hover:shadow-md transition-colors group cursor-pointer"
+                  style={{
+                    boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                  }}
+                >
+                  <div
+                    style={{ transform: 'translateZ(24px)' }}
+                    className="w-10 h-10 rounded-xl bg-white dark:bg-white/5 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm"
+                  >
+                    <Image src={tool.icon} alt={tool.name} className="w-6 h-6 object-contain" />
+                  </div>
+                  <div style={{ transform: 'translateZ(18px)' }}>
+                    <div className="font-mono text-xs font-bold text-slate-800 dark:text-slate-200">
+                      {tool.name}
+                    </div>
+                    <div className="text-[10px] text-slate-500 dark:text-slate-500 font-sans">{tool.desc}</div>
+                  </div>
+                </TiltCard3D>
+              ))}
+            </div>
 
-                <motion.h4  initial={{y:20,opacity:0}} whileInView={{y:0,opacity:1}} transition={{duration:1.3,delay:0.5}} className='my-6 text-gray-700 font-bold dark:text-white/90'>Tools I Use</motion.h4>
-                <motion.ul initial={{x:30,opacity:0}} whileInView={{x:0,opacity:1}} transition={{duration:0.8,delay:1}} className='flex items-center gap-3 sm:gap-5 mt-4 flex-wrap'>
-                  {toolsData.map((tool, index) => (
-                    <motion.li whileInView={{scale:1.05}} key={index} className='flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 border border-gray-200 bg-white/50 dark:bg-white/5 rounded-xl cursor-pointer hover:-translate-y-1.5 duration-500 dark:border-white/10 hover:shadow-[0_10px_20px_rgba(37,99,235,0.15)] dark:hover:shadow-[0_0_15px_rgba(56,189,248,0.3)] transition-all'>
-                      <Image src={tool} alt='Tool' className='w-5 sm:w-8 h-auto drop-shadow-sm' />
-                    </motion.li>
-                  ))}
-                </motion.ul>
-            </motion.div>
-        </motion.div>
-    </motion.div>
-    
-  )
+            {/* Additional Backend badges */}
+            <div className="mt-6 pt-6 border-t border-slate-100 dark:border-white/5 flex flex-wrap gap-2">
+              {[
+                'Node.js',
+                'Express.js',
+                'Next.js 16',
+                'React 19',
+                'RESTful APIs',
+                'JavaScript (ES6+)',
+                'Tailwind CSS',
+                'Mongoose',
+                'JWT Authentication',
+                'CORS & Security',
+                'JSON-RPC / WebSockets',
+              ].map((tech, i) => (
+                <span
+                  key={i}
+                  className="px-3 py-1 rounded-lg text-xs font-mono font-medium bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 transition-colors"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
 }
-
-export default About

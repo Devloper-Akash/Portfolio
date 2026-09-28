@@ -1,45 +1,76 @@
 'use client';
-import React from 'react'
-import { motion } from 'motion/react';
+
+import React from 'react';
 import Image from 'next/image';
 import { assets } from '@/assets/assets';
 
-const Footer = () => {
+export default function Footer() {
   return (
-    <div className='mt-20'>
-        <div className='text-center'>
-            <div className='text-3xl font-sans font-bold tracking-tight text-blue-900 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-sky-400 dark:to-indigo-500 drop-shadow-[0_0_10px_rgba(37,99,235,0.3)] dark:drop-shadow-[0_0_15px_rgba(56,189,248,0.4)] mx-auto mb-2 flex justify-center hover:opacity-80 transition-opacity'>
-                {"AKASH.".split("").map((char, index) => (
-                  <motion.span
-                    key={index}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.7, delay: index * 0.05 + 0.1, ease: "easeOut" }}
-                    className="inline-block"
-                  >
-                    {char === " " ? "\u00A0" : char}
-                  </motion.span>
-                ))}
-            </div>
-
-            <div className='w-max flex items-center gap-2 mx-auto'>
-                <Image src={assets.mail_icon} alt='' className='w-6 dark:hidden'/>
-                <Image src={assets.mail_icon_dark} alt='' className='hidden w-6 dark:block'/>
-                halderakash826@gmail.com
-            </div>
+    <footer className="w-full mt-24 border-t border-slate-200 dark:border-white/10 bg-white dark:bg-[#07090e] text-slate-600 dark:text-slate-400 py-12 px-6 sm:px-12 relative z-10 transition-colors duration-300">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+        {/* Brand identity & email */}
+        <div className="text-center md:text-left space-y-2">
+          <div className="text-2xl font-mono font-extrabold text-slate-900 dark:text-white tracking-tight flex items-center justify-center md:justify-start gap-2">
+            <span>AKASH</span>
+            <span className="text-emerald-500">.</span>
+            <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-mono font-bold">
+              BACKEND SPECIALIST
+            </span>
+          </div>
+          <div className="flex items-center justify-center md:justify-start gap-2 text-xs font-mono text-slate-700 dark:text-slate-400 font-medium">
+            <Image src={assets.mail_icon} alt="email" className="w-4 h-4 dark:hidden" />
+            <Image src={assets.mail_icon_dark} alt="email" className="w-4 h-4 hidden dark:block" />
+            <a href="mailto:halderakash826@gmail.com" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+              halderakash826@gmail.com
+            </a>
+          </div>
         </div>
 
-        <div className='text-center sm:flex items-center justify-between border-t
-        border-grey-400 dark:border-white/15 mx-[10%] mt-12 py-6'>
-            <p>&copy; 2026 Akash Halder. All rights reserved.</p>
-            <ul className='flex items-center gap-10 justify-center mt-4 sm:mt-0'>
-                <li><a target="_blank" href='https://github.com/Devloper-Akash' className='hover:-translate-y-0.5 hover:text-blue-600 dark:hover:text-sky-400 hover:drop-shadow-[0_0_8px_rgba(56,189,248,0.6)] transition-all duration-300 inline-block'>GitHub</a></li>
-                <li><a target="_blank" href='https://www.linkedin.com/in/akash-halder-779701379/' className='hover:-translate-y-0.5 hover:text-blue-600 dark:hover:text-sky-400 hover:drop-shadow-[0_0_8px_rgba(56,189,248,0.6)] transition-all duration-300 inline-block'>Linkedln</a></li>
-                 <li><a target="_blank" href='' className='hover:-translate-y-0.5 hover:text-blue-600 dark:hover:text-sky-400 hover:drop-shadow-[0_0_8px_rgba(56,189,248,0.6)] transition-all duration-300 inline-block'>Instagram</a></li>
-            </ul>
+        {/* Status / Region */}
+        <div className="text-center font-mono text-xs text-slate-500">
+          <div className="flex items-center justify-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-bold">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            <span>All Systems Green • Kolkata, India</span>
+          </div>
+          <p className="mt-1 text-slate-500">&copy; 2026 Akash Halder. All rights reserved.</p>
         </div>
-    </div>
-  )
+
+        {/* Social Links & Back to Top */}
+        <div className="flex items-center gap-5 text-xs font-mono font-semibold">
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://github.com/Devloper-Akash"
+            className="text-slate-700 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+          >
+            GitHub
+          </a>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://www.linkedin.com/in/akash-halder-779701379/"
+            className="text-slate-700 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+          >
+            LinkedIn
+          </a>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://instagram.com"
+            className="text-slate-700 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+          >
+            Instagram
+          </a>
+          <a
+            href="#top"
+            className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors ml-2 shadow-sm font-bold"
+            title="Back to Top"
+            aria-label="Back to Top"
+          >
+            &uarr;
+          </a>
+        </div>
+      </div>
+    </footer>
+  );
 }
-
-export default Footer

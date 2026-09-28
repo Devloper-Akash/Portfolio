@@ -1,124 +1,167 @@
-'use client'
-import React, { useState } from 'react'
-import { motion, AnimatePresence } from "motion/react";
+'use client';
+
+import { useState } from 'react';
 import Image from 'next/image';
-import { certificateData, assets } from '@/assets/assets';
+import { motion, AnimatePresence } from 'motion/react';
+import { certificateData } from '@/assets/assets';
 
-const Certificates = () => {
-    const [selectedCert, setSelectedCert] = useState(null);
+export default function Certificates() {
+  const [expandedCert, setExpandedCert] = useState(null);
+  const [selectedCert, setSelectedCert] = useState(null);
 
-    return (
-        <div id='certificates' className='w-full px-[12%] py-10 scroll-mt-20'>
-            <h4 className='text-center mb-2 text-lg font-Ovo'>My Achievements</h4>
-            <h2 className='text-center mb-4 text-4xl sm:text-5xl font-sans font-extrabold tracking-tight text-blue-900 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-sky-400 dark:to-indigo-500 drop-shadow-[0_0_10px_rgba(37,99,235,0.3)] dark:drop-shadow-[0_0_15px_rgba(56,189,248,0.4)]'>
-                {"Certificates".split("").map((char, index) => (
-                    <motion.span
-                        key={index}
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, delay: index * 0.05 + 0.1, ease: "easeOut" }}
-                        className="inline-block"
-                    >
-                        {char === " " ? "\u00A0" : char}
-                    </motion.span>
-                ))}
-            </h2>
+  const keyCompetencies = [
+    'Full Stack Web Development Architecture',
+    'HTML5, CSS3, ES6+ JavaScript',
+    'React.js Component Ecosystem',
+    'Node.js & Express RESTful APIs',
+    'MongoDB Database & Mongoose ODM',
+    'Production Deployment & Authentication',
+  ];
 
-            <p className='text-center max-w-2xl mx-auto mt-5 mb-12 font-Ovo'>Explore my certifications and courses completed to enhance my skills.</p>
-
-            <div className='grid grid-cols-auto gap-8 my-10 sm:grid-cols-2 lg:grid-cols-3'>
-                {certificateData.map((cert, index) => (
-                    <motion.div 
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        key={index} 
-                        onClick={() => setSelectedCert(cert)}
-                        className='w-full cursor-pointer relative bg-white dark:bg-[#1d1527] rounded-2xl p-4 shadow-lg hover:shadow-[0_15px_40px_rgba(37,99,235,0.3)] dark:shadow-none dark:hover:shadow-[0_0_25px_rgba(56,189,248,0.4)] transition-all duration-500 border border-gray-200 dark:border-white/10 flex flex-col items-center group'
-                    >
-                        <div className="w-full aspect-[4/3] relative rounded-xl overflow-hidden mb-4 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10">
-                            <Image src={cert.image} alt={cert.title} fill className="object-contain p-2 transition-transform duration-500 group-hover:scale-105" />
-                        </div>
-                        <h3 className='text-lg font-bold text-gray-900 dark:text-white mb-1 text-center'>{cert.title}</h3>
-                        <p className='text-sm text-gray-600 dark:text-gray-300 text-center mb-3'>{cert.issuer}</p>
-                        
-                        <div className='mt-auto flex items-center gap-2 text-blue-600 dark:text-sky-400 text-sm font-semibold opacity-80 group-hover:opacity-100 transition-opacity'>
-                            View Details 
-                            <Image src={assets.right_arrow_bold} alt='' className='w-3 dark:hidden group-hover:translate-x-1 transition-transform'/>
-                            <Image src={assets.right_arrow_bold_dark} alt='' className='hidden w-3 dark:block group-hover:translate-x-1 transition-transform'/>
-                        </div>
-                    </motion.div>
-                ))}
-            </div>
-
-            {/* Modal for viewing certificate details */}
-            <AnimatePresence>
-                {selectedCert && (
-                    <motion.div 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className='fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm'
-                        onClick={() => setSelectedCert(null)}
-                    >
-                        <motion.div 
-                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                            animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                            onClick={(e) => e.stopPropagation()}
-                            className='bg-white dark:bg-[#1d1527] w-full max-w-4xl rounded-2xl overflow-hidden flex flex-col md:flex-row shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/20'
-                        >
-                            <div className='w-full md:w-3/5 aspect-[4/3] relative bg-gray-100 dark:bg-black/50 p-4'>
-                                <Image src={selectedCert.image} alt={selectedCert.title} fill className='object-contain drop-shadow-xl' />
-                            </div>
-                            <div className='w-full md:w-2/5 p-8 flex flex-col justify-center relative'>
-                                <button 
-                                    onClick={() => setSelectedCert(null)}
-                                    className='absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 dark:bg-white/10 hover:bg-gray-300 dark:hover:bg-white/20 transition-colors'
-                                >
-                                    <Image src={assets.close_black} alt="Close" className='w-3 dark:hidden' />
-                                    <Image src={assets.close_white} alt="Close" className='w-3 hidden dark:block' />
-                                </button>
-                                <motion.h3 
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 0.1 }}
-                                    className='text-2xl font-bold text-gray-900 dark:text-white mb-2'
-                                >
-                                    {selectedCert.title}
-                                </motion.h3>
-                                <motion.p 
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 0.2 }}
-                                    className='text-blue-600 dark:text-sky-400 font-semibold mb-4 text-lg'
-                                >
-                                    {selectedCert.issuer}
-                                </motion.p>
-                                <motion.p 
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 0.3 }}
-                                    className='text-gray-700 dark:text-gray-300 mb-6 leading-relaxed'
-                                >
-                                    {selectedCert.description}
-                                </motion.p>
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.4 }}
-                                >
-                                    <span className="inline-block bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-xs font-medium px-3 py-1 rounded-full border border-blue-200 dark:border-blue-800/50">
-                                        Completed: {selectedCert.date}
-                                    </span>
-                                </motion.div>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+  return (
+    <section id="certificates" className="w-full px-[8%] sm:px-[12%] py-20 scroll-mt-24">
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-14">
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25 mb-3 font-semibold"
+          >
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            VERIFIED CREDENTIALS
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight text-slate-900 dark:text-white"
+          >
+            Accreditations &amp; Certificates
+          </motion.h2>
+          <p className="mt-3 text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-sans">
+            Explore my certifications and courses completed to enhance my skills in full stack software engineering.
+          </p>
         </div>
-    )
-}
 
-export default Certificates
+        <div className="certificate-list">
+          {certificateData.map((cert, index) => {
+            const isExpanded = expandedCert === index;
+            const detailsId = `certificate-details-${index}`;
+
+            return (
+              <motion.article
+                key={cert.credentialId || index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, delay: index * 0.08 }}
+                viewport={{ once: true }}
+                className={`certificate-item${isExpanded ? ' is-expanded' : ''}`}
+              >
+                <button
+                  type="button"
+                  className="experience-trigger certificate-trigger"
+                  aria-expanded={isExpanded}
+                  aria-controls={detailsId}
+                  onClick={() => setExpandedCert(isExpanded ? null : index)}
+                >
+                  <span className="experience-trigger-main">
+                    <span className="experience-meta">
+                      <span>ACCREDITATION</span>
+                      <span>ISSUED: {cert.date}</span>
+                      <span>{cert.issuer}</span>
+                    </span>
+                    <span className="experience-role">{cert.title}</span>
+                    <span className="experience-company">{cert.organization || cert.subtitle || 'Professional development'}</span>
+                  </span>
+                  <span className="experience-trigger-side">
+                    <span className="experience-verified"><span />VERIFIED CREDENTIAL</span>
+                    <span className="experience-toggle">{isExpanded ? 'CLOSE DETAILS' : 'VIEW DETAILS'} <span aria-hidden="true">{isExpanded ? '−' : '+'}</span></span>
+                  </span>
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {isExpanded && (
+                    <motion.div
+                      id={detailsId}
+                      key="details"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+                      className="experience-details"
+                    >
+                      <div className="certificate-details-grid">
+                        <div className="certificate-detail-copy">
+                          <div className="experience-detail-block">
+                            <h5>PROGRAM &amp; ACCREDITATION</h5>
+                            <p>{cert.description}</p>
+                          </div>
+                          {cert.personalNote && (
+                            <div className="experience-deliverable certificate-takeaway">
+                              <div className="experience-detail-label">KEY TAKEAWAY &amp; ENGINEERING INSIGHT</div>
+                              <p>{cert.personalNote}</p>
+                            </div>
+                          )}
+                          <div className="experience-detail-block">
+                            <h5>VERIFIED COMPETENCIES</h5>
+                            <div className="experience-tags">
+                              {(cert.competencies || keyCompetencies).map((competency, competencyIndex) => (
+                                <span key={competencyIndex}>{competency}</span>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="certificate-facts">
+                            <div><span>Credential ID</span><strong>{cert.credentialId || `${cert.date}-VERIFIED`}</strong></div>
+                            <div><span>Issued by</span><strong>{cert.issuer}{cert.organization ? ` · ${cert.organization}` : ''}</strong></div>
+                            <div><span>Status</span><strong>Verified &amp; Authenticated</strong></div>
+                          </div>
+                          {cert.pdfUrl && (
+                            <a href={cert.pdfUrl} target="_blank" rel="noopener noreferrer" className="certificate-pdf-link">
+                              VIEW ORIGINAL DOCUMENT
+                            </a>
+                          )}
+                        </div>
+
+                        <div className="experience-certificate-column">
+                          <button type="button" className="experience-certificate" onClick={() => setSelectedCert(cert)} aria-label={`Inspect ${cert.title} certificate`}>
+                            <Image src={cert.image} alt={`${cert.title} certificate`} fill className="object-contain p-2" />
+                            <span>INSPECT CREDENTIAL</span>
+                          </button>
+                          <p className="certificate-image-caption">Select the certificate to view it at full size.</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.article>
+            );
+          })}
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {selectedCert && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedCert(null)}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md cursor-zoom-out"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(event) => event.stopPropagation()}
+              className="relative max-w-5xl w-full aspect-[4/3] max-h-[90vh] rounded-3xl overflow-hidden shadow-2xl border border-white/20 bg-slate-950 p-3"
+            >
+              <Image src={selectedCert.image} alt={`${selectedCert.title} certificate full size`} fill className="object-contain p-2" />
+              <button onClick={() => setSelectedCert(null)} className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/75 hover:bg-black/95 text-white flex items-center justify-center font-mono text-sm border border-white/20 shadow-lg transition-colors z-20" aria-label="Close certificate preview">✕</button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
+  );
+}
