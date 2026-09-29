@@ -45,7 +45,7 @@ export default function RootLayout({ children }) {
       data-theme="light"
       suppressHydrationWarning
     >
-      <body className="portfolio-body min-h-full flex flex-col font-sans overflow-x-hidden">
+      <body className="portfolio-body min-h-full flex flex-col font-sans">
         <Script
           id="portfolio-theme-init"
           strategy="beforeInteractive"

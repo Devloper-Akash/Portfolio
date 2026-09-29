@@ -17,6 +17,15 @@ const navItems = [
 export default function Navbar() {
   const [activeSection, setActiveSection] = useState('top');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const updateScrollState = () => setIsScrolled(window.scrollY > 24);
+    updateScrollState();
+    window.addEventListener('scroll', updateScrollState, { passive: true });
+    return () => window.removeEventListener('scroll', updateScrollState);
+  }, []);
+
   useEffect(() => {
     const sections = navItems.map(({ href }) => document.querySelector(href)).filter(Boolean);
     const observer = new IntersectionObserver((entries) => {
@@ -30,7 +39,7 @@ export default function Navbar() {
 
   return (
     <header className="site-header">
-      <motion.nav initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.75 }} className="site-nav" aria-label="Main navigation">
+      <motion.nav initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.75 }} className={isScrolled ? 'site-nav is-scrolled' : 'site-nav'} aria-label="Main navigation">
         <a href="#top" className="nav-mark" aria-label="Akash Halder, home">AH<span>.</span></a>
         <div className="nav-links">
           {navItems.map(({ href, label }) => (

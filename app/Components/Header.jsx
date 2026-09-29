@@ -8,7 +8,6 @@ const telemetry = [
   ['RUNTIME', 'Node.js 22'],
   ['FRAMEWORK', 'Next.js 16'],
   ['DATABASE', 'MongoDB'],
-  ['UPTIME', '99.99%'],
 ];
 
 const reveal = {
@@ -22,14 +21,14 @@ export default function Header() {
     <section id="top" className="hero-section" aria-labelledby="hero-title">
       <div className="hero-index" aria-hidden="true">PORTFOLIO / 2026</div>
       <div className="hero-content">
+        <motion.div {...reveal} transition={{ ...reveal.transition, delay: 0.22 }} className="hero-profile">
+          <Image src={assets.profile_img} alt="Akash Halder" fill priority sizes="(max-width: 420px) 56vw, (max-width: 760px) 220px, (max-width: 1100px) 210px, 252px" className="object-cover" />
+        </motion.div>
+
         <motion.div {...reveal} transition={{ ...reveal.transition, delay: 0.12 }} className="hero-identity">
           <span className="status-dot" />
           <span>AVAILABLE FOR WORK</span>
           <span className="hero-location">KOLKATA · UTC+05:30</span>
-        </motion.div>
-
-        <motion.div {...reveal} transition={{ ...reveal.transition, delay: 0.22 }} className="hero-profile">
-          <Image src={assets.profile_img} alt="Akash Halder" fill priority sizes="(max-width: 420px) 86px, (max-width: 760px) 96px, (max-width: 1100px) 210px, 252px" className="object-cover" />
         </motion.div>
 
         <motion.p {...reveal} transition={{ ...reveal.transition, delay: 0.32 }} className="hero-greeting">
@@ -37,7 +36,7 @@ export default function Header() {
         </motion.p>
 
         <motion.h1 {...reveal} transition={{ ...reveal.transition, delay: 0.42 }} id="hero-title" className="hero-title">
-          FULL STACK
+          <span className="hero-title-first">FULL STACK</span>
           <span>DEVELOPER<span className="hero-period">.</span></span>
         </motion.h1>
 

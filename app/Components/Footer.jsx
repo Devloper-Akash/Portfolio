@@ -11,11 +11,8 @@ export default function Footer() {
         {/* Brand identity & email */}
         <div className="text-center md:text-left space-y-2">
           <div className="text-2xl font-mono font-extrabold text-slate-900 dark:text-white tracking-tight flex items-center justify-center md:justify-start gap-2">
-            <span>AKASH</span>
+            <span>AH</span>
             <span className="text-emerald-500">.</span>
-            <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-mono font-bold">
-              BACKEND SPECIALIST
-            </span>
           </div>
           <div className="flex items-center justify-center md:justify-start gap-2 text-xs font-mono text-slate-700 dark:text-slate-400 font-medium">
             <Image src={assets.mail_icon} alt="email" className="w-4 h-4 dark:hidden" />

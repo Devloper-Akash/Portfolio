@@ -6,6 +6,121 @@ import { motion } from 'motion/react';
 import { assets, infoList } from '@/assets/assets';
 import TiltCard3D from './TiltCard3D';
 
+function ToolIcon({ type, name, size = 'tile' }) {
+  const common = {
+    viewBox: '0 0 40 40',
+    role: 'img',
+    'aria-label': `${name} icon`,
+    className: size === 'badge' ? 'h-3.5 w-3.5 shrink-0' : 'h-7 w-7 sm:h-8 sm:w-8 shrink-0',
+  };
+
+  switch (type) {
+    case 'python':
+      return (
+        <svg {...common}>
+          <path fill="#3776AB" d="M19.8 4c-8 0-7.5 3.5-7.5 3.5v5h7.7v1.5H9.2S4 13.4 4 21.2s4.5 7.5 4.5 7.5h2.7v-4.2s-.2-5 4.9-5h8.3s4.7.1 4.7-4.6V8.2S29.8 4 19.8 4Zm-4.3 3.1a1.4 1.4 0 1 1 0 2.8 1.4 1.4 0 0 1 0-2.8Z" />
+          <path fill="#FFD43B" d="M20.2 36c8 0 7.5-3.5 7.5-3.5v-5H20v-1.5h10.8s5.2.6 5.2-7.2-4.5-7.5-4.5-7.5h-2.7v4.2s.2 5-4.9 5h-8.3s-4.7-.1-4.7 4.6v6.7S10.2 36 20.2 36Zm4.3-3.1a1.4 1.4 0 1 1 0-2.8 1.4 1.4 0 0 1 0 2.8Z" />
+        </svg>
+      );
+    case 'docker':
+      return (
+        <svg {...common} viewBox="0 0 48 40">
+          <g fill="#2496ED">
+            <rect x="7" y="14" width="6" height="5" rx=".7" /><rect x="14" y="14" width="6" height="5" rx=".7" />
+            <rect x="21" y="14" width="6" height="5" rx=".7" /><rect x="14" y="7" width="6" height="5" rx=".7" />
+            <rect x="21" y="7" width="6" height="5" rx=".7" /><rect x="21" y="0" width="6" height="5" rx=".7" />
+            <rect x="28" y="14" width="6" height="5" rx=".7" />
+            <path d="M45 15.5c-2 .1-3.3-.5-4.2-1.5-.7 2.1-2.1 3.3-4.5 3.7-1.7.3-3.4.1-5-.5H3.8c-.7 0-1.1.5-1 1.2C4 28 10.1 34 21.1 34c9 0 15.6-4.8 18.4-13.4 4.7.3 7.1-2.4 7.5-4.2.1-.6-.5-1-2-1Z" />
+          </g>
+        </svg>
+      );
+    case 'express':
+      return (
+        <svg {...common} viewBox={size === 'badge' ? '0 0 24 24' : '0 0 40 40'}>
+          <text x={size === 'badge' ? '1' : '2'} y={size === 'badge' ? '16' : '25'} fill="currentColor" fontFamily="Arial, sans-serif" fontSize={size === 'badge' ? '14' : '15'} fontWeight="700" letterSpacing="-1.2">ex</text>
+          <path d={size === 'badge' ? 'M1 19h21' : 'M3 30h31'} stroke="currentColor" strokeWidth="1.4" opacity=".55" />
+        </svg>
+      );
+    case 'supabase':
+      return (
+        <svg {...common}>
+          <path fill="#3ECF8E" d="M21.8 4.6a1.5 1.5 0 0 1 2.7.9v9.2h10.2a1.5 1.5 0 0 1 1.2 2.4L19.2 35.1a1.5 1.5 0 0 1-2.7-.9V25H6.3a1.5 1.5 0 0 1-1.2-2.4L21.8 4.6Z" />
+        </svg>
+      );
+    case 'shadcn':
+      return (
+        <svg {...common} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+          <path d="m8 28 20-20M14 34 34 14" />
+        </svg>
+      );
+    case 'node':
+      return (
+        <svg {...common} viewBox="0 0 24 24">
+          <path fill="#539E43" d="m12 1.5 9.1 5.25v10.5L12 22.5 2.9 17.25V6.75L12 1.5Z" />
+          <text x="12" y="15.2" textAnchor="middle" fill="white" fontSize="7" fontWeight="700" fontFamily="Arial,sans-serif">JS</text>
+        </svg>
+      );
+    case 'next':
+      return (
+        <svg {...common} viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" fill="#111827" />
+          <path d="M8 17V7l8 10V7" fill="none" stroke="white" strokeWidth="1.8" />
+        </svg>
+      );
+    case 'react':
+      return (
+        <svg {...common} viewBox="0 0 24 24" fill="none" stroke="#61DAFB" strokeWidth="1.25">
+          <ellipse cx="12" cy="12" rx="10" ry="4" /><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)" /><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)" /><circle cx="12" cy="12" r="1.6" fill="#61DAFB" stroke="none" />
+        </svg>
+      );
+    case 'rest':
+      return (
+        <svg {...common} viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M8 5 3.5 12 8 19M16 5l4.5 7-4.5 7M13.5 4l-3 16" />
+        </svg>
+      );
+    case 'javascript':
+      return (
+        <svg {...common} viewBox="0 0 24 24">
+          <rect x="2" y="2" width="20" height="20" rx="2" fill="#F7DF1E" />
+          <text x="19" y="18" textAnchor="end" fill="#222" fontSize="9" fontWeight="700" fontFamily="Arial,sans-serif">JS</text>
+        </svg>
+      );
+    case 'tailwind':
+      return (
+        <svg {...common} viewBox="0 0 24 24" fill="#38BDF8">
+          <path d="M12 5c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8 1 .2 1.7 1 2.5 1.8 1.3 1.3 2.8 2.8 6 2.8 3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-1-.2-1.7-1-2.5-1.8C16.7 6.5 15.2 5 12 5ZM6 12c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8 1 .2 1.7 1 2.5 1.8 1.3 1.3 2.8 2.8 6 2.8 3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-1-.2-1.7-1-2.5-1.8C10.7 13.5 9.2 12 6 12Z" transform="translate(1 0) scale(.92)" />
+        </svg>
+      );
+    case 'mongoose':
+      return (
+        <svg {...common} viewBox="0 0 24 24" fill="none" stroke="#B8323A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 21s-7-4.2-7-10a7 7 0 0 1 14 0c0 5.8-7 10-7 10Z" /><path d="M12 7v11" />
+        </svg>
+      );
+    case 'jwt':
+      return (
+        <svg {...common} viewBox="0 0 24 24" fill="none" stroke="#D69E2E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="8" cy="15" r="4" /><path d="m11 12 8-8m-3 3 2 2m-5 1 2 2" />
+        </svg>
+      );
+    case 'security':
+      return (
+        <svg {...common} viewBox="0 0 24 24" fill="none" stroke="#16A085" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z" /><path d="m9 12 2 2 4-4" />
+        </svg>
+      );
+    case 'websocket':
+      return (
+        <svg {...common} viewBox="0 0 24 24" fill="none" stroke="#6366F1" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="5" cy="12" r="2.2" fill="#6366F1" /><circle cx="19" cy="6" r="2.2" fill="#6366F1" /><circle cx="19" cy="18" r="2.2" fill="#6366F1" /><path d="m7 11 9.8-4M7 13l9.8 4" />
+        </svg>
+      );
+    default:
+      return <Image src={assets[type]} alt={`${name} icon`} className={`${common.className} object-contain`} />;
+  }
+}
+
 export default function About() {
   return (
     <section id="about" className="w-full px-[8%] sm:px-[12%] py-20 scroll-mt-24">
@@ -161,60 +276,51 @@ export default function About() {
               </div>
             </div>
 
-            {/* Tool Icons with 3D Tilt */}
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+            {/* Compact tool badges matching the technology row below */}
+            <div className="flex flex-wrap gap-2">
               {[
-                { name: 'VS Code', icon: assets.vscode, desc: 'Primary IDE' },
-                { name: 'MongoDB', icon: assets.mongodb, desc: 'NoSQL Document Store' },
-                { name: 'Firebase', icon: assets.firebase, desc: 'Auth & Cloud Storage' },
-                { name: 'Git', icon: assets.git, desc: 'Version Control' },
-                { name: 'Figma', icon: assets.figma, desc: 'UI/UX & Prototyping' },
-              ].map((tool, index) => (
-                <TiltCard3D
-                  key={index}
-                  tiltAngle={10}
-                  glare={false}
-                  className="flex items-center gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/15 shadow-sm hover:shadow-md transition-colors group cursor-pointer"
-                  style={{
-                    boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-                  }}
+                { name: 'VS Code', icon: 'vscode' },
+                { name: 'MongoDB', icon: 'mongodb' },
+                { name: 'Firebase', icon: 'firebase' },
+                { name: 'Git', icon: 'git' },
+                { name: 'Figma', icon: 'figma' },
+                { name: 'Python', icon: 'python' },
+                { name: 'Docker', icon: 'docker' },
+                { name: 'Express.js', icon: 'express' },
+                { name: 'Supabase', icon: 'supabase' },
+                { name: 'shadcn/ui', icon: 'shadcn' },
+              ].map((tool) => (
+                <span
+                  key={tool.name}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-mono font-medium bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 transition-colors"
                 >
-                  <div
-                    style={{ transform: 'translateZ(24px)' }}
-                    className="w-10 h-10 rounded-xl bg-white dark:bg-white/5 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm"
-                  >
-                    <Image src={tool.icon} alt={tool.name} className="w-6 h-6 object-contain" />
-                  </div>
-                  <div style={{ transform: 'translateZ(18px)' }}>
-                    <div className="font-mono text-xs font-bold text-slate-800 dark:text-slate-200">
-                      {tool.name}
-                    </div>
-                    <div className="text-[10px] text-slate-500 dark:text-slate-500 font-sans">{tool.desc}</div>
-                  </div>
-                </TiltCard3D>
+                  <ToolIcon type={tool.icon} name={tool.name} size="badge" />
+                  <span>{tool.name}</span>
+                </span>
               ))}
             </div>
 
             {/* Additional Backend badges */}
             <div className="mt-6 pt-6 border-t border-slate-100 dark:border-white/5 flex flex-wrap gap-2">
               {[
-                'Node.js',
-                'Express.js',
-                'Next.js 16',
-                'React 19',
-                'RESTful APIs',
-                'JavaScript (ES6+)',
-                'Tailwind CSS',
-                'Mongoose',
-                'JWT Authentication',
-                'CORS & Security',
-                'JSON-RPC / WebSockets',
-              ].map((tech, i) => (
+                { name: 'Node.js', icon: 'node' },
+                { name: 'Express.js', icon: 'express' },
+                { name: 'Next.js 16', icon: 'next' },
+                { name: 'React 19', icon: 'react' },
+                { name: 'RESTful APIs', icon: 'rest' },
+                { name: 'JavaScript (ES6+)', icon: 'javascript' },
+                { name: 'Tailwind CSS', icon: 'tailwind' },
+                { name: 'Mongoose', icon: 'mongoose' },
+                { name: 'JWT Authentication', icon: 'jwt' },
+                { name: 'CORS & Security', icon: 'security' },
+                { name: 'JSON-RPC / WebSockets', icon: 'websocket' },
+              ].map((tech) => (
                 <span
-                  key={i}
-                  className="px-3 py-1 rounded-lg text-xs font-mono font-medium bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 transition-colors"
+                  key={tech.name}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-mono font-medium bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 transition-colors"
                 >
-                  {tech}
+                  <ToolIcon type={tech.icon} name={tech.name} size="badge" />
+                  <span>{tech.name}</span>
                 </span>
               ))}
             </div>

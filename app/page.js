@@ -12,20 +12,22 @@ import PointerCursor from './Components/PointerCursor';
 
 export default function Home() {
   return (
-    <main className="portfolio-shell">
-      <div className="portfolio-content">
-        <PointerCursor />
-        <Navbar />
-        <Header />
-        <About />
-        <Services />
-        <Experience />
-        <Work />
-        <Certificates />
-        <GlobeSection />
-        <Contact />
-        <Footer />
-      </div>
-    </main>
+    <>
+      <Navbar />
+      <PointerCursor />
+      <main className="portfolio-shell">
+        <div className="portfolio-content">
+          <Header />
+          <About />
+          <Services />
+          <Experience />
+          <Work />
+          <Certificates />
+          <GlobeSection />
+          <Contact />
+          <Footer />
+        </div>
+      </main>
+    </>
   );
 }
