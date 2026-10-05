@@ -1,12 +1,14 @@
 {
   "name": "portfolio",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed:admin": "node scripts/seed-admin.mjs"
   },
   "dependencies": {
     "cobe": "^2.0.1",
@@ -14,7 +16,12 @@
     "next": "16.2.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "react-globe.gl": "^2.37.1"
+    "react-globe.gl": "^2.37.1",
+    "bcryptjs": "^3.0.2",
+    "cloudinary": "^2.7.0",
+    "jose": "^6.1.0",
+    "mongoose": "^8.19.0",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
