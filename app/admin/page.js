@@ -7,11 +7,22 @@ import Image from 'next/image';
 const categories = [
   ['dashboard', 'Dashboard'],
   ['projects', 'Projects'], ['certificates', 'Certificates'], ['experience', 'Experience'],
-  ['services', 'Services'], ['skills', 'Skills'], ['techstack', 'Tech Stack'], ['profile', 'Profile / About'],
+  ['services', 'Services'], ['skills', 'Skills'], ['techstack', 'Tech Stack'], ['competencies', 'Core Competencies'], ['profile', 'Profile / About'],
   ['settings', 'Settings'], ['sections', 'Sections'], ['messages', 'Messages'], ['media', 'Media'], ['security', 'Security'],
 ];
 const json = (value) => JSON.stringify(value, null, 2);
 const imageTypes = 'image/png,image/jpeg,image/webp';
+const profileFields = [
+  ['name', 'Name'],
+  ['greeting', 'Hero greeting'],
+  ['heroTitle', 'Hero title, first line'],
+  ['heroSubtitle', 'Hero title, second line'],
+  ['heroDescription', 'Hero description'],
+  ['aboutTitle', 'About section heading'],
+  ['aboutIntro', 'About section introduction'],
+  ['biography', 'Biography'],
+  ['availability', 'Availability note'],
+];
 
 function parseJsonObject(value) {
   try {
@@ -65,7 +76,7 @@ export default function AdminPage() {
   useEffect(() => { if (admin) refresh(active).catch((error) => setNotice(error.message)); }, [admin, active, refresh]);
   const counts = useMemo(() => records.length, [records]);
   const editorData = useMemo(() => parseJsonObject(form.data), [form.data]);
-  const dashboardCounts = useMemo(() => Object.fromEntries(['projects', 'certificates', 'experience', 'services', 'skills', 'techstack', 'profile', 'settings', 'sections', 'media'].map((kind) => [kind, records.filter((record) => record.kind === kind).length])), [records]);
+  const dashboardCounts = useMemo(() => Object.fromEntries(['projects', 'certificates', 'experience', 'services', 'skills', 'techstack', 'competencies', 'profile', 'settings', 'sections', 'media'].map((kind) => [kind, records.filter((record) => record.kind === kind).length])), [records]);
 
   function chooseRecord(record) {
     setSelected(record);
@@ -169,6 +180,13 @@ export default function AdminPage() {
     setNotice('Attachment removed from this entry. Save changes to publish the update.');
   }
 
+  function updateEditorDataField(field, value) {
+    setForm((current) => {
+      const data = parseJsonObject(current.data);
+      return { ...current, data: json({ ...data, [field]: value }) };
+    });
+  }
+
   function updateTechStackItem(index, field, value) {
     setForm((current) => {
       const data = parseJsonObject(current.data);
@@ -239,6 +257,9 @@ export default function AdminPage() {
     { field: 'photoUrl', label: 'Portfolio profile photo', accept: imageTypes, mode: 'replace', image: true },
   ] : active === 'skills' ? [
     { field: 'photoUrl', label: 'Skill logo (solid background removed automatically)', accept: imageTypes, mode: 'logo', image: true },
+  ] : active === 'competencies' ? [
+    { field: 'icon', label: 'Core competency icon (light theme)', accept: imageTypes, mode: 'replace', image: true },
+    { field: 'iconDark', label: 'Core competency icon (dark theme)', accept: imageTypes, mode: 'replace', image: true },
   ] : [];
 
   if (!admin) return <section className="admin-login-wrap"><form className="admin-login" onSubmit={login}>
@@ -260,8 +281,36 @@ export default function AdminPage() {
       : active === 'security' ? <section className="admin-panel admin-security"><div className="admin-panel-heading"><div><span className="admin-kicker">ACCOUNT PROTECTION</span><h2>Change your password</h2><p>Existing sessions are signed out when the password changes.</p></div></div><form onSubmit={changePassword}><label>Current password<input type="password" value={security.currentPassword} onChange={(e) => setSecurity({ ...security, currentPassword: e.target.value })} required /></label><label>New password<input type="password" minLength="12" value={security.newPassword} onChange={(e) => setSecurity({ ...security, newPassword: e.target.value })} required /><small>At least 12 characters with upper-case, lower-case, and a number.</small></label><button className="admin-primary" disabled={busy}>Update password</button></form></section>
       : active === 'messages' ? <section className="admin-messages">{messages.length === 0 ? <div className="admin-empty">Your inbox is clear.<span>New contact form messages will appear here.</span></div> : messages.map((message) => <article key={message.id} className="admin-message"><div className="admin-message-top"><div><span className={`admin-status status-${message.status}`}>{message.status}</span><h2>{message.name}</h2><a href={`mailto:${message.email}`}>{message.email}</a></div><time>{new Date(message.createdAt).toLocaleString()}</time></div><p>{message.message}</p><div className="admin-message-actions"><a className="admin-secondary" href={`mailto:${message.email}?subject=${encodeURIComponent('Re: your portfolio message')}`}>Reply by email ↗</a>{message.status !== 'read' && <button className="admin-secondary" onClick={() => changeMessage(message, 'read')}>Mark read</button>}{message.status !== 'archived' && <button className="admin-secondary" onClick={() => changeMessage(message, 'archived')}>Archive</button>}</div></article>)}</section>
       : active === 'media' ? <section className="admin-panel"><div className="admin-panel-heading"><div><span className="admin-kicker">CLOUDINARY LIBRARY</span><h2>Upload an image or PDF</h2><p>PNG, JPEG, WebP, or PDF. Maximum file size 10 MB.</p></div></div><form className="admin-upload" onSubmit={uploadFile}><input type="file" accept="image/png,image/jpeg,image/webp,application/pdf" onChange={(e) => setUpload(e.target.files?.[0] || null)} required /><button className="admin-primary" disabled={busy}>Upload file</button></form><div className="admin-media-grid">{records.map((record) => <a key={record.id} className="admin-media-card" href={record.data.url} target="_blank" rel="noreferrer">{record.data.mime?.startsWith('image/') ? <Image src={record.data.url} alt="" width={300} height={190} unoptimized /> : <span className="admin-pdf">PDF</span>}<b>{record.title}</b><small>{record.data.format?.toUpperCase()} · {Math.ceil(record.data.size / 1024)} KB</small></a>)}</div></section>
-      : <div className="admin-content-grid"><section className="admin-panel admin-records"><div className="admin-panel-heading"><div><span className="admin-kicker">{counts} {counts === 1 ? 'RECORD' : 'RECORDS'}</span><h2>Content entries</h2><p>{active === 'techstack' ? 'Edit the technologies shown in the Developer Ecosystem card.' : 'Choose an entry to edit its fields and display order.'}</p></div>{active !== 'techstack' && <button className="admin-primary admin-add" onClick={createRecord}>＋ New</button>}</div><div className="admin-record-list">{records.map((record) => <button key={record.id} className={`admin-record${selected?.id === record.id ? ' is-selected' : ''}`} onClick={() => chooseRecord(record)}><span className="admin-record-copy"><b>{record.title}</b><small>{record.key}</small></span><span className={`admin-visibility${record.visible ? '' : ' is-hidden'}`}>{record.visible ? 'Live' : 'Hidden'}</span></button>)}{records.length === 0 && <div className="admin-empty">No entries yet.</div>}</div></section>
-      <section className="admin-panel admin-editor"><div className="admin-panel-heading"><div><span className="admin-kicker">{selected ? 'EDIT ENTRY' : 'CONTENT EDITOR'}</span><h2>{selected ? selected.title : 'Create an entry'}</h2><p>{active === 'techstack' ? 'Edit the badge labels and icon styles shown on your portfolio.' : 'Content is checked on the server before saving.'}</p></div></div><form onSubmit={saveRecord}><div className="admin-form-row"><label>Key / slug<input value={form.key} onChange={(e) => setForm({ ...form, key: e.target.value })} placeholder="my-project" required /></label><label>Sort order<div className="admin-order-control"><button type="button" aria-label="Move earlier" onClick={() => setForm({ ...form, order: Math.max(0, Number(form.order) - 1) })}>↑</button><input type="number" min="0" value={form.order} onChange={(e) => setForm({ ...form, order: e.target.value })} /><button type="button" aria-label="Move later" onClick={() => setForm({ ...form, order: Number(form.order) + 1 })}>↓</button></div></label></div><label>Display title<input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required /></label>{attachmentFields.length > 0 && <section className="admin-asset-tools"><div><span className="admin-kicker">FILE ATTACHMENTS</span><h3>Photos and files</h3><p>Uploads go to your media library. Save changes to attach them to this entry.</p></div>{attachmentFields.map(({ field, label, accept, mode, image, multiple }) => {
+      : <div className="admin-content-grid">
+        <section className="admin-panel admin-records">
+          <div className="admin-panel-heading">
+            <div>
+              <span className="admin-kicker">{counts} {counts === 1 ? 'RECORD' : 'RECORDS'}</span>
+              <h2>Content entries</h2>
+              <p>{active === 'techstack' ? 'Edit the technologies shown in the Developer Ecosystem card.' : active === 'competencies' ? 'Edit the cards shown beside your biography.' : 'Choose an entry to edit its fields and display order.'}</p>
+            </div>
+            {active !== 'techstack' && <button className="admin-primary admin-add" onClick={createRecord}>＋ New</button>}
+          </div>
+          <div className="admin-record-list">
+            {records.map((record) => <button key={record.id} className={`admin-record${selected?.id === record.id ? ' is-selected' : ''}`} onClick={() => chooseRecord(record)}><span className="admin-record-copy"><b>{record.title}</b><small>{record.key}</small></span><span className={`admin-visibility${record.visible ? '' : ' is-hidden'}`}>{record.visible ? 'Live' : 'Hidden'}</span></button>)}
+            {records.length === 0 && <div className="admin-empty">No entries yet.</div>}
+          </div>
+        </section>
+        <section className="admin-panel admin-editor">
+          <div className="admin-panel-heading">
+            <div>
+              <span className="admin-kicker">{selected ? 'EDIT ENTRY' : 'CONTENT EDITOR'}</span>
+              <h2>{selected ? selected.title : 'Create an entry'}</h2>
+              <p>{active === 'techstack' ? 'Edit the badge labels and icon styles shown on your portfolio.' : active === 'profile' ? 'These fields control the homepage photo, hero copy, and biography.' : active === 'competencies' ? 'Edit a Core Competencies card and its light and dark icons.' : 'Content is checked on the server before saving.'}</p>
+            </div>
+          </div>
+          <form onSubmit={saveRecord}>
+            <div className="admin-form-row">
+              <label>Key / slug<input value={form.key} onChange={(e) => setForm({ ...form, key: e.target.value })} placeholder="my-project" required /></label>
+              <label>Sort order<div className="admin-order-control"><button type="button" aria-label="Move earlier" onClick={() => setForm({ ...form, order: Math.max(0, Number(form.order) - 1) })}>↑</button><input type="number" min="0" value={form.order} onChange={(e) => setForm({ ...form, order: e.target.value })} /><button type="button" aria-label="Move later" onClick={() => setForm({ ...form, order: Number(form.order) + 1 })}>↓</button></div></label>
+            </div>
+            <label>Display title<input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required /></label>
+            {attachmentFields.length > 0 && <section className="admin-asset-tools"><div><span className="admin-kicker">FILE ATTACHMENTS</span><h3>Photos and files</h3><p>Uploads go to your media library. Save changes to attach them to this entry.</p></div>{attachmentFields.map(({ field, label, accept, mode, image, multiple }) => {
         const raw = editorData[field];
         const values = mode === 'images' || mode === 'files' ? (Array.isArray(raw) ? raw : []) : (typeof raw === 'string' && raw ? [raw] : []);
         return <div className="admin-asset-field" key={field}><label>{label}<input type="file" accept={accept} multiple={multiple} onChange={(event) => uploadAssets(event, field, mode)} disabled={busy} /></label>{values.length > 0 && <div className="admin-asset-list">{values.map((item, index) => {
@@ -269,7 +318,16 @@ export default function AdminPage() {
           const itemTitle = typeof item === 'string' ? url.split('/').pop() : item.title || url.split('/').pop();
           return <div className="admin-asset-item" key={`${url}-${index}`}>{image && <Image src={url} alt="" width={56} height={48} unoptimized />}<a href={url} target="_blank" rel="noreferrer">{itemTitle}</a><button type="button" className="admin-asset-remove" onClick={() => removeAsset(field, mode === 'images' || mode === 'files' ? index : null)}>Remove</button></div>;
         })}</div>}</div>;
-      })}</section>}{active === 'techstack' ? <section className="admin-tech-editor" aria-label="Portfolio technology badges"><div className="admin-tech-editor-heading"><div><h3>Technology badges</h3><p>These appear in the lower row of the Developer Ecosystem card.</p></div><button type="button" className="admin-secondary" onClick={addTechStackItem}>＋ Add technology</button></div><div className="admin-tech-list">{(Array.isArray(editorData.items) ? editorData.items : []).map((item, index) => <div className="admin-tech-row" key={index}><label>Technology name<input value={item.name || ''} onChange={(event) => updateTechStackItem(index, 'name', event.target.value)} placeholder="e.g. Node.js" required /></label><label>Icon style<input value={item.icon || ''} onChange={(event) => updateTechStackItem(index, 'icon', event.target.value)} placeholder="node" aria-describedby={`tech-icon-hint-${index}`} /><small id={`tech-icon-hint-${index}`} className="admin-label-hint">Examples: node, react, next, javascript, security</small></label><div className="admin-tech-photo"><label>Photo / logo (solid background removed)<input type="file" accept={imageTypes} onChange={(event) => uploadTechStackPhoto(event, index)} disabled={busy} /></label>{item.photoUrl && <div className="admin-tech-photo-preview"><Image src={item.photoUrl} alt={`${item.name || 'Technology'} logo preview`} width={44} height={44} unoptimized /><button type="button" className="admin-asset-remove" onClick={() => removeTechStackPhoto(index)} disabled={busy}>Remove photo</button></div>}</div><button type="button" className="admin-danger" onClick={() => removeTechStackItem(index)} aria-label={`Remove ${item.name || 'technology'}`} disabled={busy}>Remove</button></div>)}{(!Array.isArray(editorData.items) || editorData.items.length === 0) && <div className="admin-empty">No technologies added yet.<span>Add a technology to show a badge on your portfolio.</span></div>}</div></section> : <label>Content data <span className="admin-label-hint">JSON fields</span><textarea className="admin-json" spellCheck="false" value={form.data} onChange={(e) => setForm({ ...form, data: e.target.value })} /></label>}{active !== 'techstack' && <label className="admin-toggle"><input type="checkbox" checked={form.visible} onChange={(e) => setForm({ ...form, visible: e.target.checked })} /><span>Visible on the portfolio</span></label>}<div className="admin-editor-actions"><button className="admin-primary" disabled={busy}>{busy ? 'Saving…' : 'Save changes'}</button>{selected && active !== 'techstack' && <button type="button" className="admin-danger" onClick={deleteRecord} disabled={busy}>Delete</button>}</div></form></section></div>}
+      })}</section>}
+            {active === 'techstack' ? <section className="admin-tech-editor" aria-label="Portfolio technology badges"><div className="admin-tech-editor-heading"><div><h3>Technology badges</h3><p>These appear in the lower row of the Developer Ecosystem card.</p></div><button type="button" className="admin-secondary" onClick={addTechStackItem}>＋ Add technology</button></div><div className="admin-tech-list">{(Array.isArray(editorData.items) ? editorData.items : []).map((item, index) => <div className="admin-tech-row" key={index}><label>Technology name<input value={item.name || ''} onChange={(event) => updateTechStackItem(index, 'name', event.target.value)} placeholder="e.g. Node.js" required /></label><label>Icon style<input value={item.icon || ''} onChange={(event) => updateTechStackItem(index, 'icon', event.target.value)} placeholder="node" aria-describedby={`tech-icon-hint-${index}`} /><small id={`tech-icon-hint-${index}`} className="admin-label-hint">Examples: node, react, next, javascript, security</small></label><div className="admin-tech-photo"><label>Photo / logo (solid background removed)<input type="file" accept={imageTypes} onChange={(event) => uploadTechStackPhoto(event, index)} disabled={busy} /></label>{item.photoUrl && <div className="admin-tech-photo-preview"><Image src={item.photoUrl} alt={`${item.name || 'Technology'} logo preview`} width={44} height={44} unoptimized /><button type="button" className="admin-asset-remove" onClick={() => removeTechStackPhoto(index)} disabled={busy}>Remove photo</button></div>}</div><button type="button" className="admin-danger" onClick={() => removeTechStackItem(index)} aria-label={`Remove ${item.name || 'technology'}`} disabled={busy}>Remove</button></div>)}{(!Array.isArray(editorData.items) || editorData.items.length === 0) && <div className="admin-empty">No technologies added yet.<span>Add a technology to show a badge on your portfolio.</span></div>}</div></section>
+            : active === 'profile' ? <section className="admin-profile-fields" aria-label="Profile and About fields"><h3>Homepage and About copy</h3>{profileFields.map(([field, label]) => <label key={field}>{label}{['heroDescription', 'aboutIntro', 'biography'].includes(field) ? <textarea rows={field === 'biography' ? 5 : 3} value={editorData[field] || ''} onChange={(event) => updateEditorDataField(field, event.target.value)} /> : <input value={editorData[field] || ''} onChange={(event) => updateEditorDataField(field, event.target.value)} />}</label>)}</section>
+            : active === 'competencies' ? <label>Card description<textarea rows="3" value={editorData.description || ''} onChange={(event) => updateEditorDataField('description', event.target.value)} required /></label>
+            : <label>Content data <span className="admin-label-hint">JSON fields</span><textarea className="admin-json" spellCheck="false" value={form.data} onChange={(e) => setForm({ ...form, data: e.target.value })} /></label>}
+            {active !== 'techstack' && <label className="admin-toggle"><input type="checkbox" checked={form.visible} onChange={(e) => setForm({ ...form, visible: e.target.checked })} /><span>Visible on the portfolio</span></label>}
+            <div className="admin-editor-actions"><button className="admin-primary" disabled={busy}>{busy ? 'Saving…' : 'Save changes'}</button>{selected && active !== 'techstack' && <button type="button" className="admin-danger" onClick={deleteRecord} disabled={busy}>Delete</button>}</div>
+          </form>
+        </section>
+      </div>}
       <footer className="admin-footer">Content changes publish to the live portfolio after saving.</footer>
     </main>
   </div>;

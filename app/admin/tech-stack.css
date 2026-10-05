@@ -14,3 +14,8 @@
 .admin-tech-photo input[type=file]{max-width:100%;font-size:10px}
 .admin-tech-photo-preview{display:flex;align-items:center;gap:8px;margin-top:8px}
 .admin-tech-photo-preview img{width:36px;height:36px;object-fit:contain;border-radius:7px;background:transparent}
+.admin-profile-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px;margin:8px 0 22px;padding:17px;border:1px solid #e3ebe7;border-radius:12px;background:#fbfdfc}
+.admin-profile-fields h3{grid-column:1/-1;margin:0 0 14px;color:#263d33;font:700 14px var(--font-space-grotesk),sans-serif}
+.admin-profile-fields label{margin-bottom:14px!important}
+.admin-profile-fields label:nth-of-type(n+4){grid-column:1/-1}
+@media(max-width:620px){.admin-profile-fields{grid-template-columns:1fr}.admin-profile-fields h3,.admin-profile-fields label:nth-of-type(n+4){grid-column:auto}}

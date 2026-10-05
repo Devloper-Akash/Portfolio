@@ -17,6 +17,7 @@ const reveal = {
 };
 
 export default function Header({ profile }) {
+  const greeting = profile?.greeting || `HELLO, I AM ${profile?.name || 'AKASH HALDER'}`;
   return (
     <section id="top" className="hero-section" aria-labelledby="hero-title">
       <div className="hero-index" aria-hidden="true">PORTFOLIO / 2026</div>
@@ -32,17 +33,17 @@ export default function Header({ profile }) {
         </motion.div>
 
         <motion.p {...reveal} transition={{ ...reveal.transition, delay: 0.32 }} className="hero-greeting">
-          HELLO, I AM AKASH HALDER
+          {greeting.toUpperCase()}
         </motion.p>
 
         <motion.h1 {...reveal} transition={{ ...reveal.transition, delay: 0.42 }} id="hero-title" className="hero-title">
-          <span className="hero-title-first">FULL STACK</span>
-          <span>DEVELOPER<span className="hero-period">.</span></span>
+          <span className="hero-title-first">{profile?.heroTitle || 'FULL STACK'}</span>
+          <span>{profile?.heroSubtitle || 'DEVELOPER'}<span className="hero-period">.</span></span>
         </motion.h1>
 
         <motion.div {...reveal} transition={{ ...reveal.transition, delay: 0.55 }} className="hero-lower">
           <p className="hero-description">
-            I am a Fullstack Developer from Kolkata, India &amp; also a dedicated fresher passionate about architecting resilient backend systems, robust APIs, scalable databases, and modern interactive web experiences.
+            {profile?.heroDescription || 'I am a Fullstack Developer from Kolkata, India & also a dedicated fresher passionate about architecting resilient backend systems, robust APIs, scalable databases, and modern interactive web experiences.'}
           </p>
           <div className="hero-actions">
             <a href="#work" className="text-link">EXPLORE WORK</a>

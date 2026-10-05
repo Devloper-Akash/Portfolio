@@ -5,8 +5,9 @@ import { connectDb } from '@/lib/db';
 import { Content } from '@/lib/models';
 import { requireAdmin, sameOrigin } from '@/lib/security';
 import { DEFAULT_TECH_STACK_RECORD } from '@/lib/default-tech-stack';
+import { DEFAULT_COMPETENCIES } from '@/lib/default-competencies';
 
-const kinds = ['projects', 'services', 'certificates', 'experience', 'skills', 'techstack', 'profile', 'settings', 'sections', 'media'];
+const kinds = ['projects', 'services', 'certificates', 'experience', 'skills', 'techstack', 'competencies', 'profile', 'settings', 'sections', 'media'];
 const mutationSchema = z.object({
   kind: z.enum(kinds), key: z.string().trim().min(1).max(100), title: z.string().trim().min(1).max(180),
   data: z.record(z.string(), z.unknown()), visible: z.boolean().default(true), order: z.number().int().min(0).max(10000).default(0),
@@ -23,6 +24,17 @@ export async function GET(request) {
           { $setOnInsert: DEFAULT_TECH_STACK_RECORD },
           { upsert: true },
         );
+      } catch (error) {
+        if (error.code !== 11000) throw error;
+      }
+    }
+    if (kind === 'competencies') {
+      try {
+        await Promise.all(DEFAULT_COMPETENCIES.map((record) => Content.updateOne(
+          { kind: 'competencies', key: record.key },
+          { $setOnInsert: record },
+          { upsert: true },
+        )));
       } catch (error) {
         if (error.code !== 11000) throw error;
       }
@@ -80,7 +92,7 @@ export async function DELETE(request) {
 }
 
 function refreshContent() {
-  revalidateTag('portfolio-content', 'max');
+  revalidateTag('portfolio-content', { expire: 0 });
   revalidatePath('/');
   revalidatePath('/work/[id]', 'page');
 }

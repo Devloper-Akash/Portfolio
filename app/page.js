@@ -13,9 +13,10 @@ import { getPublishedContent } from '@/lib/portfolio-data';
 
 export default async function Home() {
   const published = await getPublishedContent();
-  const byKind = (kind) => published.length ? published.filter((item) => item.kind === kind && item.visible).map((item) => ({ ...item.data, id: item.key, slug: item.key, order: item.order })) : null;
+  const byKind = (kind) => published.length ? published.filter((item) => item.kind === kind && item.visible).map((item) => ({ ...item.data, title: item.title, id: item.key, slug: item.key, order: item.order })) : null;
   const profile = (byKind('profile') || [])[0];
   const techStack = (byKind('techstack') || [])[0] || null;
+  const competencies = byKind('competencies');
   const sectionSettings = published.filter((item) => item.kind === 'sections');
   const defaultSections = ['about', 'services', 'experience', 'work', 'certificates', 'contact'];
   const sections = (sectionSettings.length ? sectionSettings : defaultSections.map((key, order) => ({ key, visible: true, order }))).filter((section) => section.visible).sort((a, b) => a.order - b.order);
@@ -28,7 +29,7 @@ export default async function Home() {
     ...sectionsWithoutLocation.slice(availabilityIndex),
   ];
   const sectionComponents = {
-    about: <About profile={profile} skills={byKind('skills')} techStack={techStack} />,
+    about: <About profile={profile} skills={byKind('skills')} techStack={techStack} competencies={competencies} />,
     services: <Services services={byKind('services')} />,
     experience: <Experience experiences={byKind('experience')} />,
     work: <Work projects={byKind('projects')} />,
