@@ -7,7 +7,11 @@ import { assets, infoList } from '@/assets/assets';
 import { DEFAULT_TECH_STACK } from '@/lib/default-tech-stack';
 import TiltCard3D from './TiltCard3D';
 
-function ToolIcon({ type, name, size = 'tile' }) {
+function ToolIcon({ type, name, size = 'tile', image }) {
+  if (image) {
+    return <Image src={image} alt={`${name} logo`} width={size === 'badge' ? 18 : 36} height={size === 'badge' ? 18 : 36} unoptimized className={`${size === 'badge' ? 'h-3.5 w-3.5' : 'h-7 w-7 sm:h-8 sm:w-8'} shrink-0 object-contain`} />;
+  }
+
   const common = {
     viewBox: '0 0 40 40',
     role: 'img',
@@ -297,7 +301,7 @@ export default function About({ profile, skills, techStack }) {
                   whileHover={{ y: -3, scale: 1.025, transition: { duration: 0.18 } }}
                   className="tech-stack-chip inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-mono font-medium bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 transition-colors"
                 >
-                  <span className="tech-stack-icon"><ToolIcon type={tool.icon} name={tool.name} size="badge" /></span>
+                  <span className="tech-stack-icon"><ToolIcon type={tool.icon} name={tool.name} image={tool.photoUrl || tool.image} size="badge" /></span>
                   <span>{tool.name}</span>
                 </motion.span>
               ))}
@@ -315,7 +319,7 @@ export default function About({ profile, skills, techStack }) {
                   whileHover={{ y: -3, scale: 1.025, transition: { duration: 0.18 } }}
                   className="tech-stack-chip inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-mono font-medium bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 transition-colors"
                 >
-                  <span className="tech-stack-icon"><ToolIcon type={tech.icon || 'node'} name={tech.name} size="badge" /></span>
+                  <span className="tech-stack-icon"><ToolIcon type={tech.icon || 'node'} name={tech.name} image={tech.photoUrl || tech.image} size="badge" /></span>
                   <span>{tech.name}</span>
                 </motion.span>
               ))}
