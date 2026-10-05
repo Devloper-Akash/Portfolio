@@ -5,7 +5,8 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'motion/react';
 import { certificateData } from '@/assets/assets';
 
-export default function Certificates() {
+export default function Certificates({ certificates }) {
+  const displayedCertificates = Array.isArray(certificates) ? certificates : certificateData;
   const [expandedCert, setExpandedCert] = useState(null);
   const [selectedCert, setSelectedCert] = useState(null);
 
@@ -45,7 +46,7 @@ export default function Certificates() {
         </div>
 
         <div className="certificate-list">
-          {certificateData.map((cert, index) => {
+          {displayedCertificates.map((cert, index) => {
             const isExpanded = expandedCert === index;
             const detailsId = `certificate-details-${index}`;
 
@@ -125,7 +126,7 @@ export default function Certificates() {
 
                         <div className="experience-certificate-column">
                           <button type="button" className="experience-certificate" onClick={() => setSelectedCert(cert)} aria-label={`Inspect ${cert.title} certificate`}>
-                            <Image src={cert.image} alt={`${cert.title} certificate`} fill className="object-contain p-2" />
+                            <Image src={cert.image} alt={`${cert.title} certificate`} fill sizes="(max-width: 768px) 100vw, 40vw" className="object-contain p-2" />
                             <span>INSPECT CREDENTIAL</span>
                           </button>
                           <p className="certificate-image-caption">Select the certificate to view it at full size.</p>
@@ -156,7 +157,7 @@ export default function Certificates() {
               onClick={(event) => event.stopPropagation()}
               className="relative max-w-5xl w-full aspect-[4/3] max-h-[90vh] rounded-3xl overflow-hidden shadow-2xl border border-white/20 bg-slate-950 p-3"
             >
-              <Image src={selectedCert.image} alt={`${selectedCert.title} certificate full size`} fill className="object-contain p-2" />
+              <Image src={selectedCert.image} alt={`${selectedCert.title} certificate full size`} fill sizes="(max-width: 768px) 100vw, 80vw" className="object-contain p-2" />
               <button onClick={() => setSelectedCert(null)} className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/75 hover:bg-black/95 text-white flex items-center justify-center font-mono text-sm border border-white/20 shadow-lg transition-colors z-20" aria-label="Close certificate preview">✕</button>
             </motion.div>
           </motion.div>

@@ -1,14 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState('light');
-
-  useEffect(() => {
-    setTheme(document.documentElement.dataset.theme || 'light');
-  }, []);
+  const theme = useSyncExternalStore(
+    (onChange) => {
+      window.addEventListener('portfolio-theme-change', onChange);
+      return () => window.removeEventListener('portfolio-theme-change', onChange);
+    },
+    () => document.documentElement.dataset.theme || 'light',
+    () => 'light',
+  );
 
   function toggleTheme() {
     const root = document.documentElement;
@@ -23,7 +26,6 @@ export default function ThemeToggle() {
         window.localStorage.setItem('portfolio-theme', nextTheme);
       } catch {}
       window.dispatchEvent(new CustomEvent('portfolio-theme-change', { detail: { theme: nextTheme } }));
-      setTheme(nextTheme);
     };
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

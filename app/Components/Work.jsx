@@ -5,7 +5,8 @@ import Image from 'next/image';
 import { motion } from 'motion/react';
 import { workData } from '@/assets/assets';
 
-export default function Work() {
+export default function Work({ projects }) {
+  const work = Array.isArray(projects) ? projects : workData.map((item, index) => ({ ...item, slug: String(index) }));
   const projectTechStack = [
     ['React', 'Tailwind CSS', 'Responsive UI', 'State Flow'],
     ['Geolocation API', 'Leaflet / Maps', 'Mobile First', 'Push Alerts'],
@@ -30,8 +31,8 @@ export default function Work() {
         </div>
 
         <div className="work-list">
-          {workData.map((project, index) => {
-            const projectPath = `/work/${index}`;
+          {work.map((project, index) => {
+            const projectPath = `/work/${project.slug || project.id || index}`;
             const techStack = project.techStack?.slice(0, 4) || projectTechStack[index] || [];
             const liveUrl = project.liveUrl && !project.liveUrl.endsWith('Devloper-Akash') ? project.liveUrl : null;
 
@@ -39,7 +40,7 @@ export default function Work() {
               <motion.article key={project.title || index} initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: Math.min(index * 0.06, 0.24) }} viewport={{ once: true }} className="work-item">
                 <Link href={projectPath} className="work-visual" data-cursor="VIEW" aria-label={`View ${project.title}`}>
                   <Image src={project.bgImage} alt={project.title} fill sizes="(max-width: 760px) 100vw, 56vw" className="work-image object-cover" />
-                  <span className="work-image-index">0{index + 1} / {String(workData.length).padStart(2, '0')}</span>
+                  <span className="work-image-index">0{index + 1} / {String(work.length).padStart(2, '0')}</span>
                 </Link>
 
                 <div className="work-copy">

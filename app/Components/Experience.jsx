@@ -5,7 +5,8 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'motion/react';
 import { experienceData } from '@/assets/assets';
 
-export default function Experience() {
+export default function Experience({ experiences }) {
+  const displayedExperience = Array.isArray(experiences) ? experiences : experienceData;
   const [expandedExperience, setExpandedExperience] = useState(null);
   const [selectedCertImage, setSelectedCertImage] = useState(null);
 
@@ -26,7 +27,7 @@ export default function Experience() {
         </div>
 
         <div className="experience-list">
-          {experienceData.map((exp, index) => {
+          {displayedExperience.map((exp, index) => {
             const isExpanded = expandedExperience === index;
             const detailsId = `experience-details-${index}`;
 

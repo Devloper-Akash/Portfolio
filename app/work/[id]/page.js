@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { use } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -11,19 +11,32 @@ import ThemeToggle from '@/components/ui/theme-toggle';
 
 export default function WorkDetails({ params }) {
   const resolvedParams = use(params);
-  const id = parseInt(resolvedParams.id, 10);
-  const project = workData[id];
+  const slug = resolvedParams.id;
+  const index = parseInt(slug, 10);
+  const [project, setProject] = useState(workData[index] || null);
+  const [projectCount, setProjectCount] = useState(workData.length);
+  const [loading, setLoading] = useState(!workData[index]);
   const [isZoomed, setIsZoomed] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(0);
 
-  if (!project) {
-    notFound();
-  }
+  useEffect(() => {
+    let active = true;
+    fetch(`/api/projects/${encodeURIComponent(slug)}`).then(async (response) => {
+      if (!response.ok) throw new Error('Project not found');
+      return response.json();
+    }).then((value) => { if (active) { setProject(value.project); setProjectCount(value.total); } })
+      .catch(() => { if (active && !workData[index]) setProject(null); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [slug, index]);
+
+  if (!project) return loading ? <div className="min-h-screen grid place-items-center bg-slate-50 dark:bg-[#07090e] text-slate-500">Loading project…</div> : notFound();
 
   const isVercelLive = project.title === 'ProResume' || project.title === 'ScriptBridge AI' || project.liveUrl?.includes('vercel.app');
   const galleryImages = [
     { label: isVercelLive ? 'Live Vercel Landing Page' : 'Project Overview', src: project.bgImage },
     ...(project.liveScreenshot && project.liveScreenshot !== project.bgImage ? [{ label: 'Live Vercel Landing', src: project.liveScreenshot }] : []),
+    ...(Array.isArray(project.galleryImages) ? project.galleryImages.filter((src) => src && src !== project.bgImage && src !== project.liveScreenshot).map((src, index) => ({ label: `Project Photo ${index + 1}`, src })) : []),
   ];
 
   const currentImage = galleryImages[selectedPhoto]?.src || project.bgImage;
@@ -53,7 +66,7 @@ export default function WorkDetails({ params }) {
           <div className="project-detail-tools">
             <ThemeToggle />
             <div className="project-counter flex items-center gap-2 font-mono text-xs text-slate-500">
-              <span>PROJECT {id + 1} OF {workData.length}</span>
+              <span>PROJECT {index >= 0 ? index + 1 : 1} OF {projectCount}</span>
             </div>
           </div>
         </div>
@@ -180,6 +193,7 @@ export default function WorkDetails({ params }) {
               src={currentImage}
               alt={project.title}
               fill
+              sizes="(max-width: 768px) 100vw, 960px"
               className="object-cover object-top group-hover:scale-[1.02] transition-transform duration-700"
               priority
             />
@@ -221,6 +235,11 @@ export default function WorkDetails({ params }) {
           >
             <span>Explore Source Code on GitHub</span>
           </a>
+          {(project.projectFiles || []).map((file, index) => (
+            <a key={file.url || index} href={file.url} target="_blank" rel="noopener noreferrer" className="project-action-secondary flex-1 min-w-[200px] text-center py-3.5 px-6 rounded-2xl bg-slate-900 dark:bg-white/10 hover:bg-slate-800 dark:hover:bg-white/15 text-white font-mono text-xs font-bold transition-all border border-slate-700 dark:border-white/15 shadow-sm flex items-center justify-center gap-2">
+              <span>{file.title || `Project file ${index + 1}`} ↗</span>
+            </a>
+          ))}
 
           <Link
             href="/#contact"
@@ -430,6 +449,7 @@ export default function WorkDetails({ params }) {
                 src={currentImage}
                 alt={project.title}
                 fill
+                sizes="(max-width: 768px) 100vw, 1152px"
                 className="object-contain"
               />
               <button

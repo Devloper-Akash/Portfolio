@@ -6,7 +6,8 @@ import { motion } from 'motion/react';
 import { serviceData } from '@/assets/assets';
 import TiltCard3D from './TiltCard3D';
 
-export default function Services() {
+export default function Services({ services }) {
+  const displayedServices = Array.isArray(services) ? services : serviceData;
   const serviceBadges = [
     ['Next.js', 'React', 'REST APIs'],
     ['Responsive', 'PWA', 'Location Tracking'],
@@ -43,7 +44,7 @@ export default function Services() {
 
         {/* 3D Interactive Capability Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {serviceData.map(({ icon, title, description, link }, index) => (
+          {displayedServices.map(({ icon, title, description, link }, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 30 }}
@@ -66,7 +67,7 @@ export default function Services() {
                     style={{ transform: 'translateZ(34px)' }}
                     className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center mb-6 transition-all duration-300 shadow-sm"
                   >
-                    <Image src={icon} alt={title} className="w-7 h-7 drop-shadow-sm group-hover:scale-110 transition-transform duration-300" />
+                    <Image src={icon} alt={title} width={28} height={28} className="w-7 h-7 drop-shadow-sm group-hover:scale-110 transition-transform duration-300" />
                   </div>
 
                   {/* 3D Elevated Service Title */}

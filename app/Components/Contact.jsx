@@ -11,32 +11,58 @@ export default function Contact() {
 
   const onSubmit = async (event) => {
     event.preventDefault();
+    const form = event.currentTarget;
     setStatus('sending');
-    setResult('Dispatching payload to API gateway...');
-    const formData = new FormData(event.target);
-
-    // Preserving exact Web3Forms access key
-    formData.append('access_key', '552bfebe-a203-4cb4-b6ed-06c96e38c094');
+    setResult('Sending your message...');
+    const formData = new FormData(form);
+    const message = Object.fromEntries(formData.entries());
 
     try {
-      const response = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        body: formData,
-      });
+      const [emailResult, archiveResult] = await Promise.allSettled([
+        fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            ...message,
+            access_key: process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY,
+            subject: `Portfolio message from ${message.name.replace(/[\r\n]+/g, ' ')}`,
+            from_name: 'Portfolio Contact',
+          }),
+        }).then(async (response) => {
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok || data.success !== true) throw new Error('Email delivery failed.');
+          return data;
+        }),
+        fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(message),
+        }).then(async (response) => {
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok || !data.ok) throw new Error(data.error || 'Message archive failed.');
+          return data;
+        }),
+      ]);
 
-      const data = await response.json();
-
-      if (data.success) {
+      const emailSent = emailResult.status === 'fulfilled';
+      const archived = archiveResult.status === 'fulfilled';
+      if (emailSent) {
         setStatus('success');
-        setResult('HTTP 200 OK: Message dispatched successfully!');
-        event.target.reset();
+        setResult(archived
+          ? 'Message emailed successfully. Thank you for getting in touch!'
+          : 'Your message was emailed successfully. The portfolio inbox archive is temporarily unavailable.');
+        form.reset();
+      } else if (archived) {
+        setStatus('warning');
+        setResult('Your message was saved in the portfolio inbox, but email delivery failed. Please use the direct email or LinkedIn link as a backup.');
+        form.reset();
       } else {
         setStatus('error');
-        setResult(data.message || 'HTTP 500: Message could not be dispatched.');
+        setResult('Your message could not be sent. Please try again or use the direct email or LinkedIn link.');
       }
-    } catch (error) {
+    } catch {
       setStatus('error');
-      setResult('Network Error: Failed to reach dispatch endpoint.');
+      setResult('Unable to connect right now. Please try again shortly.');
     }
   };
 
@@ -89,7 +115,7 @@ export default function Contact() {
             >
             <div className="flex items-center gap-2 text-slate-700 dark:text-slate-400 font-medium">
               <span className="text-emerald-600 dark:text-emerald-400 font-bold">POST</span>
-              <span>/api/v1/communication/dispatch</span>
+              <span>/api/contact</span>
             </div>
             <div className="flex items-center gap-1.5 text-slate-500 text-[11px] font-medium">
               <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
@@ -108,6 +134,7 @@ export default function Contact() {
                   type="text"
                   name="name"
                   required
+                  maxLength={120}
                   placeholder="e.g. John Doe / Tech Recruiter"
                   className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-slate-900 dark:text-white font-mono text-sm focus:outline-none focus:border-emerald-500 focus:bg-white dark:focus:bg-transparent focus:ring-1 focus:ring-emerald-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600 shadow-sm"
                 />
@@ -122,6 +149,7 @@ export default function Contact() {
                   type="email"
                   name="email"
                   required
+                  maxLength={254}
                   placeholder="e.g. contact@company.com"
                   className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-slate-900 dark:text-white font-mono text-sm focus:outline-none focus:border-emerald-500 focus:bg-white dark:focus:bg-transparent focus:ring-1 focus:ring-emerald-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600 shadow-sm"
                 />
@@ -136,6 +164,7 @@ export default function Contact() {
               <textarea
                 name="message"
                 required
+                maxLength={5000}
                 rows={5}
                 placeholder="Describe project requirements, tech stack, or engineering inquiry..."
                 className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-slate-900 dark:text-white font-mono text-sm focus:outline-none focus:border-emerald-500 focus:bg-white dark:focus:bg-transparent focus:ring-1 focus:ring-emerald-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600 shadow-sm resize-none"
@@ -150,6 +179,8 @@ export default function Contact() {
                 className={`p-3 rounded-xl text-xs font-mono border ${
                   status === 'success'
                     ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-800 dark:text-emerald-300 font-bold'
+                    : status === 'warning'
+                    ? 'bg-amber-500/10 border-amber-500/30 text-amber-900 dark:text-amber-200 font-bold'
                     : status === 'error'
                     ? 'bg-rose-500/10 border-rose-500/30 text-rose-800 dark:text-rose-300 font-bold'
                     : 'bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300'

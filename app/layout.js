@@ -1,5 +1,6 @@
 import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
-import Script from "next/script";
+import { getPublishedContent } from '@/lib/portfolio-data';
+import ThemeInitializer from '@/components/ui/theme-init';
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -20,10 +21,11 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-export const metadata = {
-  title: "Akash Halder | Full Stack Developer & Backend Specialist",
-  description:
-    "Portfolio of Akash Halder - Full Stack Developer specializing in scalable backend systems, robust REST APIs, modern web architectures, and interactive 3D experiences.",
+export async function generateMetadata() {
+  const settings = (await getPublishedContent()).find((item) => item.kind === 'settings' && item.key === 'site')?.data;
+  return {
+  title: settings?.title || "Akash Halder | Full Stack Developer & Backend Specialist",
+  description: settings?.description || "Portfolio of Akash Halder - Full Stack Developer specializing in scalable backend systems, robust REST APIs, modern web architectures, and interactive 3D experiences.",
   keywords: [
     "Full Stack Developer",
     "Backend Specialist",
@@ -35,7 +37,8 @@ export const metadata = {
     "Akash Halder",
     "Kolkata",
   ],
-};
+  };
+}
 
 export default function RootLayout({ children }) {
   return (
@@ -46,13 +49,7 @@ export default function RootLayout({ children }) {
       suppressHydrationWarning
     >
       <body className="portfolio-body min-h-full flex flex-col font-sans">
-        <Script
-          id="portfolio-theme-init"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `try { var savedTheme = localStorage.getItem('portfolio-theme'); if (savedTheme === 'dark') { document.documentElement.dataset.theme = 'dark'; document.documentElement.classList.add('dark'); } } catch (_) {}`,
-          }}
-        />
+        <ThemeInitializer />
         {children}
       </body>
     </html>

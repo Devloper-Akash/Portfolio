@@ -16,13 +16,13 @@ const reveal = {
   transition: { duration: 0.85, ease: [0.16, 1, 0.3, 1] },
 };
 
-export default function Header() {
+export default function Header({ profile }) {
   return (
     <section id="top" className="hero-section" aria-labelledby="hero-title">
       <div className="hero-index" aria-hidden="true">PORTFOLIO / 2026</div>
       <div className="hero-content">
         <motion.div {...reveal} transition={{ ...reveal.transition, delay: 0.22 }} className="hero-profile">
-          <Image src={assets.profile_img} alt="Akash Halder" fill priority sizes="(max-width: 420px) 56vw, (max-width: 760px) 220px, (max-width: 1100px) 210px, 252px" className="object-cover" />
+          <Image src={profile?.photoUrl || assets.profile_img} alt={profile?.name || 'Akash Halder'} fill priority sizes="(max-width: 420px) 56vw, (max-width: 760px) 220px, (max-width: 1100px) 210px, 252px" className="object-cover" />
         </motion.div>
 
         <motion.div {...reveal} transition={{ ...reveal.transition, delay: 0.12 }} className="hero-identity">

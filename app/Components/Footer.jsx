@@ -15,8 +15,8 @@ export default function Footer() {
             <span className="text-emerald-500">.</span>
           </div>
           <div className="flex items-center justify-center md:justify-start gap-2 text-xs font-mono text-slate-700 dark:text-slate-400 font-medium">
-            <Image src={assets.mail_icon} alt="email" className="w-4 h-4 dark:hidden" />
-            <Image src={assets.mail_icon_dark} alt="email" className="w-4 h-4 hidden dark:block" />
+            <Image src={assets.mail_icon} alt="email" width={16} height={16} className="w-4 h-4 dark:hidden" />
+            <Image src={assets.mail_icon_dark} alt="email" width={16} height={16} className="w-4 h-4 hidden dark:block" />
             <a href="mailto:halderakash826@gmail.com" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
               halderakash826@gmail.com
             </a>

@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { motion } from 'motion/react';
 import { assets, infoList } from '@/assets/assets';
+import { DEFAULT_TECH_STACK } from '@/lib/default-tech-stack';
 import TiltCard3D from './TiltCard3D';
 
 function ToolIcon({ type, name, size = 'tile' }) {
@@ -117,11 +118,18 @@ function ToolIcon({ type, name, size = 'tile' }) {
         </svg>
       );
     default:
-      return <Image src={assets[type]} alt={`${name} icon`} className={`${common.className} object-contain`} />;
+      return <Image src={assets[type] || type} alt={`${name} icon`} width={32} height={32} className={`${common.className} object-contain`} />;
   }
 }
 
-export default function About() {
+export default function About({ profile, skills, techStack }) {
+  const compactSkills = Array.isArray(skills) ? skills : [
+    { name: 'VS Code', icon: 'vscode' }, { name: 'MongoDB', icon: 'mongodb' }, { name: 'Firebase', icon: 'firebase' },
+    { name: 'Git', icon: 'git' }, { name: 'Figma', icon: 'figma' }, { name: 'Python', icon: 'python' },
+    { name: 'Docker', icon: 'docker' }, { name: 'Express.js', icon: 'express' }, { name: 'Supabase', icon: 'supabase' }, { name: 'shadcn/ui', icon: 'shadcn' },
+  ];
+  const backendTech = (Array.isArray(techStack?.items) ? techStack.items : DEFAULT_TECH_STACK)
+    .filter((tech) => typeof tech?.name === 'string' && tech.name.trim());
   return (
     <section id="about" className="w-full px-[8%] sm:px-[12%] py-20 scroll-mt-24">
       <div className="max-w-6xl mx-auto">
@@ -173,9 +181,10 @@ export default function About() {
                   className="about-profile relative aspect-square overflow-hidden border border-slate-200 dark:border-white/10 group"
                 >
                   <Image
-                    src={assets.user_image}
+                    src={profile?.photoUrl || assets.user_image}
                     alt="Akash"
                     fill
+                    sizes="(max-width: 768px) 80vw, 320px"
                     className="object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                 </div>
@@ -190,14 +199,14 @@ export default function About() {
                   style={{ transform: 'translateZ(18px)' }}
                   className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed font-sans"
                 >
-                  I am a passionate and dedicated software developer with a strong background in web development. I have experience working with various programming languages and frameworks, and I am always eager to learn new technologies. I am committed to delivering high-quality code and creating innovative solutions to complex problems. My goal is to continuously improve my skills and contribute to the success of the projects I work on.
+                  {profile?.biography || 'I am a passionate and dedicated software developer with a strong background in web development. I have experience working with various programming languages and frameworks, and I am always eager to learn new technologies. I am committed to delivering high-quality code and creating innovative solutions to complex problems. My goal is to continuously improve my skills and contribute to the success of the projects I work on.'}
                 </p>
                 <div
                   style={{ transform: 'translateZ(20px)' }}
                   className="mt-4 flex items-center gap-2 text-xs font-mono text-slate-600 dark:text-slate-400"
                 >
                   <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                  <span>Open for Fullstack & Backend Engineering roles</span>
+                  <span>{profile?.availability || 'Open for Fullstack & Backend Engineering roles'}</span>
                 </div>
                 <div
                   style={{ transform: 'translateZ(24px)' }}
@@ -239,8 +248,8 @@ export default function About() {
                 className="p-5 rounded-2xl bg-white dark:bg-[#0d1117]/85 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 shadow-sm hover:shadow-md shadow-slate-200/40 transition-all group flex items-start gap-4"
               >
                 <div className="w-11 h-11 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center flex-shrink-0 transition-colors">
-                  <Image src={item.icon} alt={item.title} className="w-5 h-5 dark:hidden" />
-                  <Image src={item.iconDark} alt={item.title} className="w-5 h-5 hidden dark:block" />
+                  <Image src={item.icon} alt={item.title} width={20} height={20} className="w-5 h-5 dark:hidden" />
+                  <Image src={item.iconDark} alt={item.title} width={20} height={20} className="w-5 h-5 hidden dark:block" />
                 </div>
                 <div>
                   <h3 className="font-heading font-bold text-slate-900 dark:text-slate-100 text-sm">
@@ -278,50 +287,37 @@ export default function About() {
 
             {/* Compact tool badges matching the technology row below */}
             <div className="flex flex-wrap gap-2">
-              {[
-                { name: 'VS Code', icon: 'vscode' },
-                { name: 'MongoDB', icon: 'mongodb' },
-                { name: 'Firebase', icon: 'firebase' },
-                { name: 'Git', icon: 'git' },
-                { name: 'Figma', icon: 'figma' },
-                { name: 'Python', icon: 'python' },
-                { name: 'Docker', icon: 'docker' },
-                { name: 'Express.js', icon: 'express' },
-                { name: 'Supabase', icon: 'supabase' },
-                { name: 'shadcn/ui', icon: 'shadcn' },
-              ].map((tool) => (
-                <span
+              {compactSkills.map((tool, idx) => (
+                <motion.span
                   key={tool.name}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-mono font-medium bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 transition-colors"
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.8 }}
+                  transition={{ duration: 0.36, delay: idx * 0.045, ease: [0.2, 0.7, 0.2, 1] }}
+                  whileHover={{ y: -3, scale: 1.025, transition: { duration: 0.18 } }}
+                  className="tech-stack-chip inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-mono font-medium bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 transition-colors"
                 >
-                  <ToolIcon type={tool.icon} name={tool.name} size="badge" />
+                  <span className="tech-stack-icon"><ToolIcon type={tool.icon} name={tool.name} size="badge" /></span>
                   <span>{tool.name}</span>
-                </span>
+                </motion.span>
               ))}
             </div>
 
             {/* Additional Backend badges */}
             <div className="mt-6 pt-6 border-t border-slate-100 dark:border-white/5 flex flex-wrap gap-2">
-              {[
-                { name: 'Node.js', icon: 'node' },
-                { name: 'Express.js', icon: 'express' },
-                { name: 'Next.js 16', icon: 'next' },
-                { name: 'React 19', icon: 'react' },
-                { name: 'RESTful APIs', icon: 'rest' },
-                { name: 'JavaScript (ES6+)', icon: 'javascript' },
-                { name: 'Tailwind CSS', icon: 'tailwind' },
-                { name: 'Mongoose', icon: 'mongoose' },
-                { name: 'JWT Authentication', icon: 'jwt' },
-                { name: 'CORS & Security', icon: 'security' },
-                { name: 'JSON-RPC / WebSockets', icon: 'websocket' },
-              ].map((tech) => (
-                <span
+              {backendTech.map((tech, idx) => (
+                <motion.span
                   key={tech.name}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-mono font-medium bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 transition-colors"
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.8 }}
+                  transition={{ duration: 0.36, delay: idx * 0.04, ease: [0.2, 0.7, 0.2, 1] }}
+                  whileHover={{ y: -3, scale: 1.025, transition: { duration: 0.18 } }}
+                  className="tech-stack-chip inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-mono font-medium bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 transition-colors"
                 >
-                  <ToolIcon type={tech.icon} name={tech.name} size="badge" />
+                  <span className="tech-stack-icon"><ToolIcon type={tech.icon || 'node'} name={tech.name} size="badge" /></span>
                   <span>{tech.name}</span>
-                </span>
+                </motion.span>
               ))}
             </div>
           </motion.div>
