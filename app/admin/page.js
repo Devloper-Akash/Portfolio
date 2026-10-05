@@ -125,9 +125,10 @@ export default function AdminPage() {
     catch (error) { setNotice(error.message); } finally { setBusy(false); }
   }
 
-  async function sendUpload(file) {
+  async function sendUpload(file, { removeBackground = false } = {}) {
     const body = new FormData();
     body.append('file', file);
+    if (removeBackground) body.append('remove_background', 'true');
     const value = await request('/api/admin/upload', { method: 'POST', body });
     return value.media;
   }
@@ -139,7 +140,7 @@ export default function AdminPage() {
     let uploadedCount = 0;
     try {
       for (const file of files) {
-        const media = await sendUpload(file);
+        const media = await sendUpload(file, { removeBackground: mode === 'logo' });
         setForm((current) => {
           const data = parseJsonObject(current.data);
           let nextValue = media.url;
@@ -149,7 +150,7 @@ export default function AdminPage() {
         });
         uploadedCount += 1;
       }
-      setNotice(`${uploadedCount} file${uploadedCount === 1 ? '' : 's'} uploaded. Save changes to publish them.`);
+      setNotice(`${uploadedCount} ${mode === 'logo' ? 'logo' : 'file'}${uploadedCount === 1 ? '' : 's'} uploaded${mode === 'logo' ? ' with a transparent background' : ''}. Save changes to publish them.`);
     } catch (error) {
       setNotice(uploadedCount ? `${uploadedCount} file${uploadedCount === 1 ? '' : 's'} uploaded. ${error.message} Save changes to keep the uploaded files.` : error.message);
     } finally {
@@ -199,7 +200,7 @@ export default function AdminPage() {
     setBusy(true);
     setNotice('Uploading technology photo…');
     try {
-      const media = await sendUpload(file);
+      const media = await sendUpload(file, { removeBackground: true });
       setForm((current) => {
         const data = parseJsonObject(current.data);
         data.items = (Array.isArray(data.items) ? data.items : []).map((item, itemIndex) => itemIndex === index ? { ...item, photoUrl: media.url } : item);
@@ -237,7 +238,7 @@ export default function AdminPage() {
   ] : active === 'profile' ? [
     { field: 'photoUrl', label: 'Portfolio profile photo', accept: imageTypes, mode: 'replace', image: true },
   ] : active === 'skills' ? [
-    { field: 'photoUrl', label: 'Skill photo / logo', accept: imageTypes, mode: 'replace', image: true },
+    { field: 'photoUrl', label: 'Skill logo (solid background removed automatically)', accept: imageTypes, mode: 'logo', image: true },
   ] : [];
 
   if (!admin) return <section className="admin-login-wrap"><form className="admin-login" onSubmit={login}>
@@ -268,7 +269,7 @@ export default function AdminPage() {
           const itemTitle = typeof item === 'string' ? url.split('/').pop() : item.title || url.split('/').pop();
           return <div className="admin-asset-item" key={`${url}-${index}`}>{image && <Image src={url} alt="" width={56} height={48} unoptimized />}<a href={url} target="_blank" rel="noreferrer">{itemTitle}</a><button type="button" className="admin-asset-remove" onClick={() => removeAsset(field, mode === 'images' || mode === 'files' ? index : null)}>Remove</button></div>;
         })}</div>}</div>;
-      })}</section>}{active === 'techstack' ? <section className="admin-tech-editor" aria-label="Portfolio technology badges"><div className="admin-tech-editor-heading"><div><h3>Technology badges</h3><p>These appear in the lower row of the Developer Ecosystem card.</p></div><button type="button" className="admin-secondary" onClick={addTechStackItem}>＋ Add technology</button></div><div className="admin-tech-list">{(Array.isArray(editorData.items) ? editorData.items : []).map((item, index) => <div className="admin-tech-row" key={index}><label>Technology name<input value={item.name || ''} onChange={(event) => updateTechStackItem(index, 'name', event.target.value)} placeholder="e.g. Node.js" required /></label><label>Icon style<input value={item.icon || ''} onChange={(event) => updateTechStackItem(index, 'icon', event.target.value)} placeholder="node" aria-describedby={`tech-icon-hint-${index}`} /><small id={`tech-icon-hint-${index}`} className="admin-label-hint">Examples: node, react, next, javascript, security</small></label><div className="admin-tech-photo"><label>Photo / logo<input type="file" accept={imageTypes} onChange={(event) => uploadTechStackPhoto(event, index)} disabled={busy} /></label>{item.photoUrl && <div className="admin-tech-photo-preview"><Image src={item.photoUrl} alt={`${item.name || 'Technology'} logo preview`} width={44} height={44} unoptimized /><button type="button" className="admin-asset-remove" onClick={() => removeTechStackPhoto(index)} disabled={busy}>Remove photo</button></div>}</div><button type="button" className="admin-danger" onClick={() => removeTechStackItem(index)} aria-label={`Remove ${item.name || 'technology'}`} disabled={busy}>Remove</button></div>)}{(!Array.isArray(editorData.items) || editorData.items.length === 0) && <div className="admin-empty">No technologies added yet.<span>Add a technology to show a badge on your portfolio.</span></div>}</div></section> : <label>Content data <span className="admin-label-hint">JSON fields</span><textarea className="admin-json" spellCheck="false" value={form.data} onChange={(e) => setForm({ ...form, data: e.target.value })} /></label>}{active !== 'techstack' && <label className="admin-toggle"><input type="checkbox" checked={form.visible} onChange={(e) => setForm({ ...form, visible: e.target.checked })} /><span>Visible on the portfolio</span></label>}<div className="admin-editor-actions"><button className="admin-primary" disabled={busy}>{busy ? 'Saving…' : 'Save changes'}</button>{selected && active !== 'techstack' && <button type="button" className="admin-danger" onClick={deleteRecord} disabled={busy}>Delete</button>}</div></form></section></div>}
+      })}</section>}{active === 'techstack' ? <section className="admin-tech-editor" aria-label="Portfolio technology badges"><div className="admin-tech-editor-heading"><div><h3>Technology badges</h3><p>These appear in the lower row of the Developer Ecosystem card.</p></div><button type="button" className="admin-secondary" onClick={addTechStackItem}>＋ Add technology</button></div><div className="admin-tech-list">{(Array.isArray(editorData.items) ? editorData.items : []).map((item, index) => <div className="admin-tech-row" key={index}><label>Technology name<input value={item.name || ''} onChange={(event) => updateTechStackItem(index, 'name', event.target.value)} placeholder="e.g. Node.js" required /></label><label>Icon style<input value={item.icon || ''} onChange={(event) => updateTechStackItem(index, 'icon', event.target.value)} placeholder="node" aria-describedby={`tech-icon-hint-${index}`} /><small id={`tech-icon-hint-${index}`} className="admin-label-hint">Examples: node, react, next, javascript, security</small></label><div className="admin-tech-photo"><label>Photo / logo (solid background removed)<input type="file" accept={imageTypes} onChange={(event) => uploadTechStackPhoto(event, index)} disabled={busy} /></label>{item.photoUrl && <div className="admin-tech-photo-preview"><Image src={item.photoUrl} alt={`${item.name || 'Technology'} logo preview`} width={44} height={44} unoptimized /><button type="button" className="admin-asset-remove" onClick={() => removeTechStackPhoto(index)} disabled={busy}>Remove photo</button></div>}</div><button type="button" className="admin-danger" onClick={() => removeTechStackItem(index)} aria-label={`Remove ${item.name || 'technology'}`} disabled={busy}>Remove</button></div>)}{(!Array.isArray(editorData.items) || editorData.items.length === 0) && <div className="admin-empty">No technologies added yet.<span>Add a technology to show a badge on your portfolio.</span></div>}</div></section> : <label>Content data <span className="admin-label-hint">JSON fields</span><textarea className="admin-json" spellCheck="false" value={form.data} onChange={(e) => setForm({ ...form, data: e.target.value })} /></label>}{active !== 'techstack' && <label className="admin-toggle"><input type="checkbox" checked={form.visible} onChange={(e) => setForm({ ...form, visible: e.target.checked })} /><span>Visible on the portfolio</span></label>}<div className="admin-editor-actions"><button className="admin-primary" disabled={busy}>{busy ? 'Saving…' : 'Save changes'}</button>{selected && active !== 'techstack' && <button type="button" className="admin-danger" onClick={deleteRecord} disabled={busy}>Delete</button>}</div></form></section></div>}
       <footer className="admin-footer">Content changes publish to the live portfolio after saving.</footer>
     </main>
   </div>;
