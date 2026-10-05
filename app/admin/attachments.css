@@ -1,0 +1,11 @@
+.admin-asset-tools{margin:4px 0 20px;padding:16px;border:1px solid #e2ebe6;border-radius:12px;background:#f8fbf9}
+.admin-asset-tools h3{margin:6px 0 4px;color:#20352c;font:700 16px var(--font-space-grotesk),sans-serif}
+.admin-asset-tools>div:first-child p{margin:0 0 14px;color:#788780;font-size:11px;line-height:1.5}
+.admin-asset-field{padding:12px 0;border-top:1px solid #e6eeea}
+.admin-asset-field>label{margin:0!important;gap:7px!important}
+.admin-asset-field input[type=file]{max-width:100%;font-size:11px}
+.admin-asset-list{display:grid;gap:7px;margin-top:9px}
+.admin-asset-item{display:flex;align-items:center;gap:9px;min-width:0;padding:7px;background:#fff;border:1px solid #e5ece8;border-radius:8px}
+.admin-asset-item img{width:44px;height:38px;object-fit:cover;border-radius:5px;background:#edf2ef}
+.admin-asset-item a{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#42735f;font-size:10px;text-decoration:none}
+.admin-asset-remove{flex:none;border:0;background:transparent;color:#a45048;font-size:10px;cursor:pointer}
